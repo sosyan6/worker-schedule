@@ -1,4 +1,4 @@
-#input-wrapper {
+.input-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,10 +17,6 @@
   justify-content: center;
   align-items: center;
   
-  opacity: 0;
-  z-index: -1;
-  
-  pointer-events: none;
 }
 
 .input-form input:not(:placeholder-shown) {
@@ -30,7 +26,7 @@
 .input-form input:focus + label, .input-form input:not(:placeholder-shown) + label {
   position: absolute;
   top: -25%;
-  left: 6%;
+  left: 1%;
   color: #555;
   border-radius: .2em;
   padding: 2px 4px;
@@ -41,7 +37,7 @@
 .input-form label {
   position: absolute;
   top: 35%;
-  left: 10%;
+  left: 5%;
   color: #AAA;
   transition: all 0.25s ease;
   pointer-events: none;
@@ -57,7 +53,6 @@
 .input-form input {
   
   position: relative;
-  left: 5%;
   
   font-size: 20px;
   width: 100%;
@@ -105,7 +100,6 @@
   
   background: #33f;
   transition: all .4s ease;
-/*   transition:	width .4s ease, left .4s ease, color .4s ease, height .4s ease .4s, top .4s ease .4s; */
   z-index: 0;
 }
 
@@ -120,7 +114,7 @@
 /*   transition: all .4s ease; */
 }
 
-.button.spread > .login-form {
+.button.spread > .input-form {
   opacity: 1;
   z-index: 1;
   pointer-events: all;

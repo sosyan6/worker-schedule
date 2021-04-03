@@ -10,6 +10,7 @@ body {
   -webkit-user-select: none;
 }
 
+
 div#login {
   width: 80vw;
   height: calc( 80 * var( --vh ) );
@@ -58,6 +59,12 @@ div#login:after {
 
 .login{
     top: 80% !important;
+}
+
+.input-form {
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 @keyframes button-anim {

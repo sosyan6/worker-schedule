@@ -19,9 +19,13 @@
   <script src = "../js/GLib.js"></script>
   <script src="../js/index.js"></script>
   <body>
-    <!--  shift-type-config    -->
-    <div id = "shift-type-config">
+    <!--  shift-type-config start    -->
+    <div id = "shift-type-config" class = "hide">
       <div class = "input-form">
+        <div>
+          <input name = "initial" placeholder=" " maxlength = "2">
+          <label>シフトの頭文字（2文字まで）</label>
+          </div>
         <div>
           <input name = "name" placeholder=" ">
           <label>Name</label>
@@ -29,6 +33,8 @@
       </div>
     </div>
     <!--   shift-type-config end  -->
+    
+    <!--  header start    -->
     <div id="header">
       <div id="menu-button">
         <div id="menu">
@@ -106,6 +112,9 @@
           </svg>
       </div>
     </div>
+    <!--  header end    -->
+    
+    <!--  calender start -->
     <div id = "content-wrapper" class = "month">
       <div id="calendar">
 <!--         <div id = "2prev-month"></div> -->
@@ -123,6 +132,9 @@
         <div id = "add-plan"></div>
       </div>
     </div>
+    <!--  calender end  -->
+    
+    <!--  footer start    -->
     <div id="footer">
       <div id="month-calendar" class="mode-select">
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve" >
@@ -322,5 +334,6 @@
         <div>共有</div>
       </div>
     </div>
+    <!--  footer end    -->
   </body>
 </html>
