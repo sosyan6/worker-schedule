@@ -44,6 +44,7 @@ export class StreamData
     const shiftTypeData = this.myData.data.shiftType;
     const shiftKeyArray = Object.keys(shiftTypeData);
     for( let i = len( shiftTypeData ) - 1; i >= 0 ; i-- ){
+//  Im Playing Genshin Impact. plz fix 'selectedSharp' of under.
       const selectedSharp = () =>
       {
         if( shiftTypeData[shiftKeyArray[i]].sharp === 'circle' ) return circle;
@@ -52,7 +53,7 @@ export class StreamData
       
       const s = document.createElement( 'div' );
       s.classList.add( 'shift-type' );
-      s.innerHTML = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style = "fill: ${shiftTypeData[shiftKeyArray[i]].color}">${selectedSharp()}</svg>`;
+      s.innerHTML = `<svg viewBox="0 0 200 200" style = "fill: ${shiftTypeData[shiftKeyArray[i]].color}">${selectedSharp()}</svg>`;
       
       const initialText = document.createElement( 'div' );
       initialText.innerText = shiftTypeData[shiftKeyArray[i]].initial;
