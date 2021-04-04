@@ -124,25 +124,3 @@ div#login:after {
 .loading {
 /*   color: #0000; */
 }
-
-@media screen and ( min-aspect-ratio: 1 / 1 ) {
-  #login-form {
-    flex-direction: row !important;
-  }
-  
-  #input-wrapper {
-    
-  }
-  
-  #name {
-    
-  }
-  
-  #password {
-    
-  }
-  
-  #login-button {
-    
-  }
-}

@@ -29,3 +29,13 @@ function len( obj )
 {
   return Object.keys( obj ).length;
 }
+
+function elementsToDict( elements ) {
+  const dict = {};
+  elements.forEach( e => { if( e.name ) dict[e.name] = e.value; }  );
+  return dict;
+}
+
+function inputCheck( dict ) {
+  return Object.values( dict ).every( v => v );
+}

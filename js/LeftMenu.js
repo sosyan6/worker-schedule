@@ -2,8 +2,14 @@ export class LeftMenu
 {
   constructor()
   {
+    
+    this.startPos = {};
+    this.difference = 0;
+    
     this.addMenuEvent();
     this.addSignOutEvent();
+    
+    const menu = document.querySelector( '#menu' );
   }
   
   addMenuEvent()

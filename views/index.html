@@ -14,25 +14,11 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../js/jquery.longpress.js"></script>
   <link rel="stylesheet" href="../css/index.css" />
-  <link rel="stylesheet" href="../css/shiftTypes.css" />
+  <link rel="stylesheet" href="../css/shiftType.css" />
   <link rel="stylesheet" href="../css/inputForm.css" />
   <script src = "../js/GLib.js"></script>
   <script src="../js/index.js"></script>
   <body>
-    <!--  shift-type-config start    -->
-    <div id = "shift-type-config" class = "hide">
-      <div class = "input-form">
-        <div>
-          <input name = "initial" placeholder=" " maxlength = "2">
-          <label>シフトの頭文字（2文字まで）</label>
-          </div>
-        <div>
-          <input name = "name" placeholder=" ">
-          <label>Name</label>
-          </div>
-      </div>
-    </div>
-    <!--   shift-type-config end  -->
     
     <!--  header start    -->
     <div id="header">
@@ -91,11 +77,37 @@
           </svg>
       </div>
       <div id = "settings">
-        <div id = "shift-type-select">
-          <div id = "add-shift-button" class = "shift-type">
-            <svg height="448pt" viewbox="0 0 448 448" width="448pt"><path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40 40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969 0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8 8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/></svg>
+        <div class = "drawer-menu">
+          <div id = "shift-type-select">
+            <div id = "add-shift-button" class = "shift-type">
+              <!--  shift-type-config start    -->
+              <div class = "drawer-menu">
+                <div id = "shift-type-config" class = "">
+                  <div class = "input-form">
+                    <div>
+                      <input name = "initial" placeholder=" " maxlength = "2">
+                      <label>シフトの頭文字（2文字まで）</label>
+                      </div>
+                    <div>
+                      <input type = "color" name = "color" placeholder=" ">
+                      <label>色</label>
+                    </div>
+                    <div>
+                      <select class = "input-form" name = "sharp">
+                        <option>四角形</option>
+                        <option>円形</option>
+                      </select>
+                    </div>
+                    <div class = "yes-no">
+                      <div class = "button"><div class = "button-text">作成</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--   shift-type-config end  -->
+              <svg height="448pt" viewbox="0 0 448 448" width="448pt"><path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40 40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969 0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8 8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/></svg>
+            </div>
           </div>
-          <div class = "menu-handle"></div>
         </div>
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
           <g>
