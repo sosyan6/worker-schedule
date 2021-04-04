@@ -1,0 +1,59 @@
+.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#shift-type-config {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: calc( 100 * var( --vh ) - 50px );
+  background: #fff;
+  z-index: 12;
+  flex-direction: column;
+  align-items: center;
+}
+
+#shift-type-select {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  height: calc( 25 * var( --vh ) );
+  width: 100%;
+}
+
+div.shift-type > svg {
+  pointer-events: none;
+}
+
+
+.shift-type {
+  position: relative;
+  height: 50%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.shift-type-initial {
+  color: black;
+  font-size: 20px;
+  height: auto;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+div.shift-type > svg {
+  position: absolute;
+  height: 80%;
+  width: auto;
+  top: 0;
+  transform: translateY( 10% );
+	transition:	all 0.3s ease;
+}
+
+#add-shift-button > svg {
+  width: 70%;
+}

@@ -5,10 +5,25 @@ body {
   background: white;
   display: flex;
   flex-direction: column;
-  font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  font-family: arial,sans-serif;
   user-select: none;
   -webkit-user-select: none;
   overflow: hidden;
+}
+
+.input-form > div > .button {
+  position: relative;
+  background: #35F;
+  color: #fff;
+  margin: 0;
+  border-radius: 3vw 3vw !important;
+  border: 0 !important;
+  flex: 1;
+}
+
+.input-form input, .input-form select {
+  border-radius: 0 !important;
+  border-bottom: solid 2px #888 !important;
 }
 
 svg {
@@ -99,6 +114,11 @@ li#menu-list > ul:hover:not(#signout) {
   background: #0004;
 }
 
+li#menu-list > ul#signout > div:hover {
+  background: #0004;
+
+}
+
 ul#signout.confirm > div {
   transform: translateX(-100%);
 }
@@ -152,26 +172,15 @@ input#date {
   -webkit-appearance: none;
 }
 
-.dateShiftType {
-  height: 40%;
-  width: calc( 100% + 4px );
-  position: relative;
-  top: 20%;
-  left: -2px;
-  text-align: center;
-  border-radius: 10px 10px;
-  color: #fff;
-  font-size: 0.9em;
-  pointer-events: none;
-  background: #f55;
-}
 
 input#date::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+
 input#date::-webkit-clear-button {
   -webkit-appearance: none;
 }
+
 input#date::-webkit-calendar-picker-indicator {
   position: absolute;
   width: 100%;
@@ -222,6 +231,7 @@ div#menu-header > svg {
   opacity: 0;
   transform: translateY( 50% );
 }
+
 div#menu-button.clicked div#menu-header > svg {
   opacity: 1;
 }
@@ -247,26 +257,42 @@ div#settings {
   display: flex;
 }
 
-div#shift-type-select {
+.dateShiftType {
+  height: 40%;
+  width: calc( 100% + 4px );
+  position: relative;
+  top: 20%;
+  left: -2px;
+  text-align: center;
+  border-radius: 10px 10px;
+  color: #fff;
+  font-size: 0.9em;
+  pointer-events: none;
+  background: #f55;
+}
+
+div.drawer-menu {
   position: fixed;
-  display: flex;
-  flex-wrap: wrap;
   bottom: 0;
   right: 0;
-  height: calc( 25 * var( --vh ) );
   width: 100vw;
   z-index: 2;
   background: #fff;
-  transform: translateY( calc( 25 * var( --vh ) + 50px ) );
+  transform: translateY( calc( 100% + 50px ) );
   transition: transform .2s ease;
 }
 
-div.shift-type > svg {
-  pointer-events: none;
+div.drawer-menu:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  top: 100%;
+  z-index: 3;
 }
 
 div.menu-handle {
-  content: '';
   position: absolute;
   top: -50px;
   width: 100%;
@@ -274,55 +300,47 @@ div.menu-handle {
   border-radius: 25px 25px 0 0;
   background: #fff;
 }
-div#shift-type-select:before {
+
+div.menu-handle:before {
   content: '';
   position: absolute;
-  top: -40px;
+  top: 10px;
   left: 45%;
   width: 10%;
   height: 5px;
   border-radius: 2px;
-  background: #0007;
+  background: #888;
   z-index: 1;
 }
-div#shift-type-select:after {
+
+div.menu-handle > div.close-button {
+  position: absolute;
+  top: calc( 50% - ( 25px / 2 ) );
+  right: 20px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid #888;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+div.menu-handle > div.close-button:before, div.menu-handle > div.close-button:after {
   content: '';
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  top: 100%;
+  top: 2px;
+  left: calc( 50% - ( 3px / 2 ) );
+  width: 3px;
+  height: calc( 100% - ( 2px * 2 ) );
+  border-radius: 1px;
+  background: #888;
+  z-index: 1;
 }
 
-div#settings.clicked  div#shift-type-select {
-  transform: translateY( 0 );
+div.menu-handle > div.close-button:after {
+  transform: rotate( 45deg );
 }
-
-.shift-type {
-  position: relative;
-  height: 50%;
-  width: 20%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.shift-type-initial {
-  color: black;
-  font-size: 20px;
-  height: auto;
-  position: absolute;
-  text-align: center;
-  width: 100%;
-}
-
-div.shift-type > svg {
-  position: absolute;
-  height: 80%;
-  width: auto;
-  top: 0;
-  transform: translateY( 10% );
-	transition:	all 0.3s ease;
+div.menu-handle > div.close-button:before {
+  transform: rotate( -45deg );
 }
 
 div#settings.cancel > svg{
@@ -396,11 +414,12 @@ div#content-wrapper.month > div#calendar > div > .week > .date {
   flex: 7;
   color: #000;
 }
+
 .date:first-of-type {
-  color: #f00;
+  color: #f00 !important;
 }
 .date:last-of-type {
-  color: #00f;
+  color: #00f !important;
 }
 
 .today {

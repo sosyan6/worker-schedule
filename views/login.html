@@ -9,19 +9,21 @@
     <title>ログイン</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src = "../js/setVH.js"></script>
+    <script src = "../js/GLib.js"></script>
     <script src = "../js/login.js"></script>
+    <link rel="stylesheet" href="../css/inputForm.css" />
     <link rel="stylesheet" href="../css/login.css" />
   </head>
   <body>
     <div id = "login">
       <div id = "sign-in" class = "button">
-        <div class = "login-form">
+        <div class = "input-form">
           <div class = "input-wrapper">
-            <div class = "name">
+            <div>
               <input name = "name" placeholder=" ">
               <label>Name</label>
             </div>
-            <div class = "password">
+            <div>
               <input type = "password" name = "password" placeholder=" " autocomplete="new-password">
               <label>Password</label>
             </div>
@@ -32,7 +34,7 @@
         </div>
       </div>
       <div id = "sign-up" class = "button">
-        <div class = "login-form">
+        <div class = "input-form">
           <div class = "input-wrapper">
             <div class = "name">
               <input name = "name" placeholder=" ">
