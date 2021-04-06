@@ -69,6 +69,19 @@ app.use( async( req, res, next ) => {
       // res.sendFile( `${ __dirname }/.data/${req.body.SID}.txt` );
   }
   
+  if( req.url === '/savedata' ){
+    if( fs.existsSync(`.data/${req.cookies.SID}.json`) ){
+      fs.writeFile( `.data/${req.cookies.SID}.json`, JSON.stringify(req.body), ( err ) => {
+        if( err ){
+          res.send( 'error' ); return;
+        } 
+      } );
+      console.log( '成功したかも' );
+      res.send( 'success' );
+    }
+    return;
+  }
+  
   if( req.url === '/' ){
     res.sendFile( `${ __dirname }/views/login.html` );
     return;
