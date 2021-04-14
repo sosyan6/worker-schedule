@@ -28,46 +28,66 @@ export class SetData {
     return document.querySelector( 'div#settings' ).classList.contains( 'clicked' );
   }
   
+  deleteShiftTypeDate()
+  {
+    const del = async selectDay => 
+    {
+      const currentMonth = new Date( (await calendar).currentDate );
+      currentMonth.setDate( selectDay.innerText.match( /\d*/ )[0] );
+      
+      this.schedule[currentMonth.format('YYYY/MM')][selectDay.innerText.match( /\d*/ )[0]] = '';
+      selectDay.querySelector( '.date-shift-type' )?.remove();
+    };
+    
+    const save = async () => (await streamData).saveData();
+    
+    if( this.isSelectMode ) [...document.querySelectorAll( '.isselected' )].map( v => { v.classList.remove( 'isselected' ); return v.parentNode } ).forEach( del );
+    else{
+      del( document.querySelector( '.select-date' ) );
+      this.nextFocus();
+    }
+    save();
+  }
+  
+  nextFocus()
+  {
+    const next = document.querySelector( '.select-date + .date' );
+
+    if( next && !next.classList.contains( 'not-this-month' ) ){
+      next.dispatchEvent( new Event( 'click' ) );
+    } 
+    else
+    {
+      const nextWeek = [...document.querySelectorAll( '#this-month > .week' )].next( document.querySelector( '.select-date' ).parentNode );
+      if( nextWeek ){
+        const next = [...nextWeek.querySelectorAll( '.date' )][0];
+        if( !next.classList.contains( 'not-this-month' ) ) next.dispatchEvent( new Event( 'click' ) );
+      }
+    }
+  }
+  
   settingDateShiftType()
   {
-    document.querySelectorAll( '#shift-type-select > .shift-type:not(#add-shift-button)' ).forEach( e => {
+    document.querySelectorAll( '#shift-type-select > .shift-type:not(.not-disappear-button)' ).forEach( e => {
       
       const setDateIcon = async ( selectDay ) => {
         
-        
         const currentMonth = new Date( (await calendar).currentDate );
         currentMonth.setDate( selectDay.innerText.match( /\d*/ )[0] );
-        if( e.getAttribute('name') === 'delete' )
-        {
-          this.schedule[currentMonth.format('YYYY/MM')][selectDay.innerText.match( /\d*/ )[0]] = '';
-          selectDay.querySelector( '.date-shift-type' )?.remove();
-        }
-        else
-        {
+        
+        if( !this.schedule.hasOwnProperty( currentMonth.format( 'YYYY/MM' ) ) ) this.schedule[currentMonth.format('YYYY/MM')] = {};
+        
         this.schedule[currentMonth.format('YYYY/MM')][selectDay.innerText.match( /\d*/ )[0]] = e.getAttribute('name');
-        this.createShiftTypeDate( currentMonth, selectDay );
-          
-        }
+        this.createShiftTypeDate( currentMonth, selectDay ); 
       }
+      
       e.addEventListener( 'click' , async () => 
       {
         if( this.isSelectMode ) [...document.querySelectorAll( '.isselected' )].map( v => { v.classList.remove( 'isselected' ); return v.parentNode } ).forEach( setDateIcon );
         else if( document.querySelector( '.select-date' ) )
         {
-          const next = document.querySelector( '.select-date + .date' );
           setDateIcon( document.querySelector( '.select-date' ) );
-          
-          if( next && !next.classList.contains( 'not-this-month' ) ){
-            next.dispatchEvent( new Event( 'click' ) );
-          } 
-          else
-          {
-            const nextWeek = [...document.querySelectorAll( '#this-month > .week' )].next( document.querySelector( '.select-date' ).parentNode );
-            if( nextWeek ){
-              const next = [...nextWeek.querySelectorAll( '.date' )][0];
-              if( !next.classList.contains( 'not-this-month' ) ) next.dispatchEvent( new Event( 'click' ) );
-            }
-          }
+          this.nextFocus();
         }
         
         (await streamData).saveData();
@@ -96,7 +116,7 @@ export class SetData {
     const shiftTypeSelect = document.querySelector( '#shift-type-select' );
     const shiftKeys = Object.keys( this.shiftType );
     
-    shiftTypeSelect.querySelectorAll( '.shift-type:not(#add-shift-button)' ).forEach( e => e.remove() );
+    shiftTypeSelect.querySelectorAll( '.shift-type:not(.not-disappear-button)' ).forEach( e => e.remove() );
     
     for( let i = len( this.shiftType ) - 1; i >= 0 ; i-- ){
       const icon = this.createIconElement( this.shiftType[shiftKeys[i]], shiftKeys[i] );
@@ -126,11 +146,6 @@ export class SetData {
         }
       }
     } )
-  }
-  
-  deleteShiftTypeDate()
-  {
-    
   }
   
   createIconElement( sData, name = "" )

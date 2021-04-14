@@ -4,6 +4,7 @@ export class ButtonRegister
   {
     this.setting = document.querySelector( 'div#settings' );
     this.addShiftButton = document.querySelector( 'div#add-shift-button' );
+    this.deleteShiftButton = document.querySelector( '#delete-shift-button' );
     this.createShift = document.querySelector( '.yes-no > .button' );
     // this.stream = streamData;
     
@@ -21,6 +22,8 @@ export class ButtonRegister
       if( !e.target.isEqualNode( this.addShiftButton )  ) return;
       this.addShiftButton.querySelector( '.drawer-menu' ).dispatchEvent( new Event( 'open' ) );
     } );
+    
+    this.deleteShiftButton.addEventListener( 'click', async () => ( await setData ).deleteShiftTypeDate() );
 
     const configElement = document.querySelectorAll( '#shift-type-config > .input-form > div > *' );
     const shiftIcon = document.querySelector( '#icon-preview' );
