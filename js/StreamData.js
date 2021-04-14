@@ -8,8 +8,11 @@ export class StreamData
   
   onDownloadSuccessed( json )
   {
+    console.log( json );
     console.log( 'successed' );
     document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
+    document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
+    document.querySelector( '#next-month-button' ).addEventListener( 'save', () => this.saveData() );
     return json;
   }
   
@@ -37,7 +40,7 @@ export class StreamData
     return new Promise( ( resolve, reject ) => {
       $.post( '/getdata', this.cookies )
       .done( res => {
-        resolve( JSON.parse( res ) )
+        resolve( JSON.parse( res ) );
       } )
       .fail( () => { console.log( "oppai" ); reject(); } );
     } );
@@ -45,7 +48,7 @@ export class StreamData
   
   async saveData()
   {
-    $.post( '/savedata', ( await this.ownData ).data )
+    $.post( '/savedata', ( await this.ownData ) )
     .done( res => console.log( 'saved!' ) )
   }
 }

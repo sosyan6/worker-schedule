@@ -12,7 +12,7 @@ Date.prototype.format = function( format ){
 	.replace( /MM/, String( this.getMonth() + 1 ).padStart( 2, 0 ) )
 	.replace( /DD/, String( this.getDate() ).padStart( 2, 0 ) )
 	.replace( /HH/, String( this.getHours() ).padStart( 2, 0 ) )
-	.replace( /MM/, String( this.getMinutes() ).padStart( 2, 0 ) )
+	.replace( /mm/, String( this.getMinutes() ).padStart( 2, 0 ) )
 	.replace( /SS/, String( this.getSeconds() ).padStart( 2, 0 ) )
 	.replace( /DATE/, this );
 };

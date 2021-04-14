@@ -101,6 +101,7 @@ export class SelectMode  // 選択モード用class
   
   onTouch( e )
   {
+    if( e.target.classList.contains( 'not-this-month' ) ) return;
     e.target.querySelector( 'div.check-box' ).classList.toggle( 'isselected' );
   }
   
@@ -114,6 +115,7 @@ export class SelectMode  // 選択モード用class
           clientX < rect.x + rect.width &&
           clientY > rect.y &&
           clientY < rect.y + rect.height ){
+        if( d.classList.contains( 'not-this-month' ) ) return;
         if( e.target.querySelector( 'div.check-box' ).classList.contains( 'isselected' ) ){
           d.querySelector( 'div.check-box' ).classList.add( 'isselected' );
         }else{

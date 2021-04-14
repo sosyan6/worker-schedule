@@ -5,7 +5,7 @@ export class ButtonRegister
     this.setting = document.querySelector( 'div#settings' );
     this.addShiftButton = document.querySelector( 'div#add-shift-button' );
     this.createShift = document.querySelector( '.yes-no > .button' );
-    this.stream = streamData;
+    // this.stream = streamData;
     
     this.registButton();
   }
@@ -30,8 +30,8 @@ export class ButtonRegister
       if( inputCheck( shiftInfo ) ){
         const shiftName = shiftInfo['shiftName'];
         delete shiftInfo.shiftName;
-        ( await this.stream ).setData.shiftType[shiftName] = shiftInfo;
-        ( await this.stream ).setData.createShiftTypeSelect();
+        ( await setData ).shiftType[shiftName] = shiftInfo;
+        ( await setData ).setShiftTypeSelect();
         document.querySelector( '#add-shift-button > .drawer-menu' ).dispatchEvent( new Event( 'close' ) );
       } 
       else [...configElement].forEach( v => { if( v.name && !v.value ) v.style.borderBottom = '2px solid red'; } );
@@ -44,7 +44,7 @@ export class ButtonRegister
         shiftIcon.innerHTML = '';
         const shiftInfo = elementsToDict( configElement );
         delete shiftInfo.shiftName;
-        shiftIcon.appendChild( ( await this.stream ).setData.createIconElement( shiftInfo ) );
+        shiftIcon.appendChild( ( await setData ).createIconElement( shiftInfo ) );
       } );
     } );
   }

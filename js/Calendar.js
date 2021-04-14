@@ -2,12 +2,6 @@ export class Calendar
 {
   constructor()
   {
-    this.sample = {
-      '休み': {
-        'color' : '#555',
-      },
-    };
-    
     this.baseDate = new Date();
     this.currentDate = new Date( this.baseDate );
     this.generateCalendar();
@@ -15,7 +9,6 @@ export class Calendar
     this.setCurrentDate();
     this.setIndexDate();
     this.initDisplayDate();
-    
   }
   
   generateCalendar()
@@ -39,21 +32,13 @@ export class Calendar
           </g>
         </svg>`;
       
-      const dateShiftType = document.createElement( 'div' );
-      dateShiftType.classList.add( 'date-shift-type' );
-      dateShiftType.innerText = '休み';
-      dateShiftType.style.background = this.sample['休み'].color;
       date.appendChild( checkBox );
-      date.appendChild( dateShiftType );
 
       const weekFragment = new DocumentFragment();
-
       for( let d = 0; d < 7; d++ ){
         weekFragment.append( date.cloneNode( true ) );
       }
-
       week.append( weekFragment );
-
       const monthFragment = new DocumentFragment();
       for( let w = 0; w < 6; w++ ){
         monthFragment.append( week.cloneNode( true ) );
@@ -100,8 +85,7 @@ export class Calendar
       this.setCurrentMonth( { year: value[0], month: value[1] - 1 } );
     } );
 
-    document.querySelector( 'div#prevMonth' ).addEventListener( 'click', () => {
-      console.log( );
+    document.querySelector( 'div#prev-month-button' ).addEventListener( 'click', function(){
       document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#eee' );
       document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#eee' );
       document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#eee' );
@@ -109,7 +93,7 @@ export class Calendar
       document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.display = 'block' );
       calendar.scrollBy( { top: 0, left: -thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
-    document.querySelector( 'div#nextMonth' ).addEventListener( 'click', () => {
+    document.querySelector( 'div#next-month-button' ).addEventListener( 'click', function(){
       document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#eee' );
       document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#eee' );
       document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#eee' );
@@ -122,11 +106,13 @@ export class Calendar
   initDisplayDate()
   {
     const monthNode = document.querySelectorAll( 'div#calendar > div' );
-    monthNode.forEach( ( monthElement, m ) => {
+    monthNode.forEach( async( monthElement, m ) => {
       const tempDate = new Date( this.currentDate );
       m -= Math.floor( monthNode.length / 2 );
       tempDate.setMonth( this.currentDate.getMonth() + m );
-      this.createMonth( monthElement, tempDate );
+      this.optimizeDate( tempDate );
+      this.createMonth( monthElement, new Date( tempDate ) );
+      // (await setData).setShiftTypeDate( monthElement, new Date( tempDate ) );
     } );
   }
   
@@ -145,8 +131,7 @@ export class Calendar
   
   createMonth( element, creatingDate )
   {
-    this.optimizeDate( creatingDate );
-    this.loopMonth( element, ( data ) => 
+    this.loopMonth( element, async ( data ) => 
     {
       data.date.innerHTML = data.date.innerHTML.replace( /\d*(<div class="day">\n.<\/div>)*/, creatingDate.format( `DD<div class = 'day'>\ndd</div>` ) );
       
@@ -174,12 +159,17 @@ export class Calendar
         data.date.classList.add( 'not-this-month' );
       }
       
+    setData.then( s => {
+      s.createShiftTypeDate( savedDate, data.date );
+    } );
+      
       creatingDate.setDate( creatingDate.getDate() + 1 );
     } );
   }
   
   setCurrentMonth( option )
   {
+    console.log( this.currentDate );
     if( option.direction ){
       this.currentDate.setMonth( this.currentDate.getMonth() + option.direction );
     }else{
@@ -193,7 +183,7 @@ export class Calendar
   
   setCurrentDate( date = this.baseDate )
   {
-    document.querySelector( 'div#today-view' ).innerText = date.format( 'MM/DD(d)' );
+    document.querySelector( 'div#today-view' ).innerText = date.format( 'MM/DD(dd)' );
   }
   
   setIndexDate()
