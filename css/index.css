@@ -73,6 +73,14 @@ div#menu:after {
   height: 100%;
 }
 
+#display-name {
+  position: relative;
+  margin: auto;
+  text-align: center;
+  font-weight: bold;
+  
+}
+
 li#menu-list {
   display: flex;
   flex-direction: column;

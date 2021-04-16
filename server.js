@@ -5,7 +5,7 @@ const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const app = express();
 
-const baseJSON = fs.readFileSync( 'baseData.json', 'utf-8' );
+const baseJSON = JSON.parse( fs.readFileSync( 'baseData.json', 'utf-8' ) );
 
 app.use( cookieParser() );
 app.use( bodyParser() );
@@ -26,7 +26,9 @@ app.use( async( req, res, next ) => {
     const hashHex = genHash( req );
     if( !fs.existsSync(`.data/${hashHex}.json`) ){
       //  ファイルがないなら作成して成功を返す
-      fs.writeFile( `.data/${hashHex}.json`, baseJSON, err => {
+      const newJson = baseJSON;
+      newJson.loginInfo = req.body;
+      fs.writeFile( `.data/${hashHex}.json`, JSON.stringify( newJson ), err => {
         if( err ) {
           res.send('error'); return;
         }
@@ -53,16 +55,17 @@ app.use( async( req, res, next ) => {
   }
   
   if( req.url === '/getdata' ){
-    console.log( "haitta" );
+    console.log( req.body.SID );
     fs.readFile( `.data/${req.body.SID}.json`, 'utf-8', ( err, data ) => {
       if( err ) 
-      { 
-        //res.writeHead( 404 );
+      {
         res.status( 404 ).send( 'ファイルが見つかりませんでした' ); 
-        // console.error( err );
         return;
       }
-      res.send( data );
+      const newJson = JSON.parse( data );
+      res.cookie( 'name', newJson.loginInfo.name, { maxAge: 1000 * 3600 * 24 * 365 } );
+      delete newJson.loginInfo.password;
+      res.send( JSON.stringify( newJson ) );
       console.log( "atta" );
     });  
     return;

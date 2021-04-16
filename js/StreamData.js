@@ -13,6 +13,8 @@ export class StreamData
     document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
     document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
     document.querySelector( '#next-month-button' ).addEventListener( 'save', () => this.saveData() );
+    
+    document.querySelector( '#display-name' ).textContent = this.cookies.name + ' さん';
     return json;
   }
   
@@ -20,7 +22,7 @@ export class StreamData
   {
     console.log( 'failed' );
     document.cookie = "SID=;";
-    location.reload();
+    // location.reload();
   }
   
   getCookies()
@@ -28,6 +30,7 @@ export class StreamData
     this.cookies = {};
     document.cookie.split( ';' ).forEach( cookie =>
     {
+      cookie = cookie.replace( ' ', '' );
       const data = cookie.split( '=' );
       this.cookies[data[0]] = data[1];
     } );
@@ -40,9 +43,10 @@ export class StreamData
     return new Promise( ( resolve, reject ) => {
       $.post( '/getdata', this.cookies )
       .done( res => {
+        console.log( res );
         resolve( JSON.parse( res ) );
       } )
-      .fail( () => { console.log( "oppai" ); reject(); } );
+      .fail( () => { console.log( "sippai" ); reject(); } );
     } );
   }
   
