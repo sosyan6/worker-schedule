@@ -3,18 +3,17 @@ export class StreamData
   constructor()
   {
     this.getCookies();
-    this.ownData = this.loadData().then( json => this.onDownloadSuccessed( json ), this.onDownloadFailed );
+    this.ownData = this.loadData().then( json => this.onDownloadSuccessed( json ) ,this.onDownloadFailed );
   }
   
   onDownloadSuccessed( json )
   {
     console.log( json );
-    console.log( 'successed' );
+    this.getCookies();
     document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
     document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
     document.querySelector( '#next-month-button' ).addEventListener( 'save', () => this.saveData() );
-    
-    document.querySelector( '#display-name' ).textContent = this.cookies.name + ' さん';
+    document.querySelector( '#display-name' ).textContent = decodeURI(this.cookies.name) + ' さん';
     return json;
   }
   
@@ -22,7 +21,7 @@ export class StreamData
   {
     console.log( 'failed' );
     document.cookie = "SID=;";
-    // location.reload();
+    location.reload();
   }
   
   getCookies()
@@ -38,21 +37,28 @@ export class StreamData
     return this.cookies;
   }
   
-  async loadData()
+  loadData()
   {
-    return new Promise( ( resolve, reject ) => {
+    return new Promise( ( resolve, reject ) =>
+    {
       $.post( '/getdata', this.cookies )
-      .done( res => {
-        console.log( res );
-        resolve( JSON.parse( res ) );
-      } )
-      .fail( () => { console.log( "sippai" ); reject(); } );
-    } );
+      .done( res => resolve( JSON.parse( res ) ) )
+      .fail( () => reject() );
+    } 
+    );
   }
   
-  async saveData()
+  saveData()
   {
-    $.post( '/savedata', ( await this.ownData ) )
-    .done( res => console.log( 'saved!' ) )
+    this.ownData.then( ( d ) =>
+    {
+      $.ajax( { url: '/savedata',
+               type: 'post',
+               data: JSON.stringify(d),
+               datatype: 'json',
+               contentType: "application/json; charset=utf-8"
+      } )
+      .done( res => console.log( d ) )
+    } );
   }
 }

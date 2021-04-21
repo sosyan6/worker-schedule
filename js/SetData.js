@@ -1,67 +1,171 @@
 export class SetData {
   
-  /**
-   *　set〇〇();      // ショートカット関数
-   *　create〇〇();   // 値を返す
-   */
-  
-  
   constructor()
   {
-    this.waitSetData().then( async() => {
+    this.waitSetData().then( async() =>
+    {
       this.setShiftTypeSelect();
-      console.log( await calendar );
+      // document.querySelector( '.select-date' ).dispatchEvent( new Event( 'click' ) );  //  今日のplanを表示する
+      
+      ( await calendar ).setSelectDate( new Date(), document.querySelector( '.today' ) );
       document.querySelector( '#icon-preview' ).appendChild( this.createIconElement( elementsToDict( document.querySelectorAll( '#shift-type-config > .input-form > div > *' ) ) ) );
     } );
   }
   
+  get isSelectMode()
+  {
+    return document.querySelector( 'div#settings' ).classList.contains( 'cancel' );
+  }
+  
+  getMonthShift( month ){
+    if( this.shift.hasOwnProperty( month.format( 'YYYY/MM' ) ) )
+      return this.shift[month.format( 'YYYY/MM' )];
+    else
+      return null;
+  }
+  getDayShift( ...args ){
+    
+    const get = date =>
+    {
+      if( date && this.shift.hasOwnProperty( date.format( 'YYYY/MM' ) ) && this.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
+        return this.shift[date.format( 'YYYY/MM' )][date.format('DD')];
+      else
+        return null;
+    };
+    
+    switch( args.length )
+    {
+      case 1:
+        return get( args[0] );
+        break;
+        
+      case 2:
+        const date = new Date( args[0] );
+        date.setDate( args[1] );
+        return get( date );
+        break;
+      
+      default:
+        return null;
+        break;
+    }
+  }
+  
+  initMonthShift( month ){
+    if( !this.shift.hasOwnProperty( month.format( 'YYYY/MM' ) ) )
+      this.shift[month.format( 'YYYY/MM' )] = {};
+  }
+  initDayShift( ...args ){
+    
+    const init = date =>
+    {
+      this.initMonthShift( date );
+      if( !this.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
+        this.shift[date.format( 'YYYY/MM' )][date.format('DD')] = {};
+    };
+    
+    switch( args.length )
+    {
+      case 1:
+        init( args[0] );
+        break;
+        
+      case 2:
+        const date = new Date( args[0] );
+        date.setDate( args[1] );
+        init( date );
+        break;
+        
+      default:
+        return null;
+        break;
+    }
+  }
+  
+  setMonthShift( month, data ){
+    if( !this.shift.hasOwnProperty( month.format( 'YYYY/MM' ) ) )
+      this.shift[month.format( 'YYYY/MM' )] = data;
+  }
+  setDayShift( ...args ){
+    
+    const set = ( date, data ) =>
+    {
+      this.initMonthShift( date );
+      this.initDayShift( date );
+      for( const [key, value] of Object.entries( data ) ){
+        this.shift[date.format( 'YYYY/MM' )][date.format( 'DD' )][key] = value;
+      }
+    };
+    
+    switch( args.length )
+    {
+      case 2:
+        set( args[0], args[1] );
+        break;
+        
+      case 3:
+        const date = new Date( args[0] );
+        date.setDate( args[1] );
+        set( date, args[2] );
+        break;
+        
+      default:
+        return null;
+        break;
+    }
+  }
+
   loopMonth( monthElement, func )
   {
-    console.log( monthElement );
     monthElement.querySelectorAll( '.week' ).forEach( ( week, w ) => {
       week.querySelectorAll( '.date' ).forEach( ( date, d ) => func( { 'week': week, 'w': w, 'date': date, 'd': d } ) );
     });
   }
   
-  get isSelectMode()
-  {
-    return document.querySelector( 'div#settings' ).classList.contains( 'clicked' );
-  }
-  
   deleteShiftTypeDate()
   {
+    // awaitが使いたいのでラムダにします
+    const save = async () => (await streamData).saveData();
+    // 削除するための関数をローカルに作ります
     const del = async selectDay => 
     {
       const currentMonth = new Date( (await calendar).currentDate );
-      currentMonth.setDate( selectDay.innerText.match( /\d*/ )[0] );
+      const dayNum = getDayNum( selectDay );
       
-      this.schedule[currentMonth.format('YYYY/MM')][selectDay.innerText.match( /\d*/ )[0]] = '';
+      currentMonth.setDate( dayNum );
       selectDay.querySelector( '.date-shift-type' )?.remove();
+      
+      if( this.getMonthShift( currentMonth )[dayNum] )
+        this.getMonthShift( currentMonth )[dayNum]['shiftName'] = '';
+      console.log( this.getMonthShift( currentMonth ) );
     };
     
-    const save = async () => (await streamData).saveData();
-    
-    if( this.isSelectMode ) [...document.querySelectorAll( '.isselected' )].map( v => { v.classList.remove( 'isselected' ); return v.parentNode } ).forEach( del );
-    else{
+    if( this.isSelectMode )
+      [...document.querySelectorAll( '.isselected' )].map( v => { v.classList.remove( 'isselected' ); return v.parentNode } ).forEach( del );
+    else
+    {
       del( document.querySelector( '.select-date' ) );
       this.nextFocus();
     }
     save();
   }
   
-  nextFocus()
+  async nextFocus()
   {
     const next = document.querySelector( '.select-date + .date' );
-
-    if( next && !next.classList.contains( 'not-this-month' ) ){
-      next.dispatchEvent( new Event( 'click' ) );
-    } 
+    const c = await calendar;
+    if( next && !next.classList.contains( 'not-this-month' ) )
+      // next.dispatchEvent( new Event( 'click' ) );
+      c.setSelectDate( getDateFromDateElement( next ), next );
     else
     {
       const nextWeek = [...document.querySelectorAll( '#this-month > .week' )].next( document.querySelector( '.select-date' ).parentNode );
-      if( nextWeek ){
+      if( nextWeek )
+      {
         const next = [...nextWeek.querySelectorAll( '.date' )][0];
-        if( !next.classList.contains( 'not-this-month' ) ) next.dispatchEvent( new Event( 'click' ) );
+        if( !next.classList.contains( 'not-this-month' ) )
+          // next.dispatchEvent( new Event( 'click' ) );
+          c.setSelectDate( getDateFromDateElement( next ), next );
       }
     }
   }
@@ -71,13 +175,8 @@ export class SetData {
     document.querySelectorAll( '#shift-type-select > .shift-type:not(.not-disappear-button)' ).forEach( e => {
       
       const setDateIcon = async ( selectDay ) => {
-        
-        const currentMonth = new Date( (await calendar).currentDate );
-        currentMonth.setDate( selectDay.innerText.match( /\d*/ )[0] );
-        
-        if( !this.schedule.hasOwnProperty( currentMonth.format( 'YYYY/MM' ) ) ) this.schedule[currentMonth.format('YYYY/MM')] = {};
-        
-        this.schedule[currentMonth.format('YYYY/MM')][selectDay.innerText.match( /\d*/ )[0]] = e.getAttribute('name');
+        const currentMonth = createDate( (await calendar).currentDate, getDayNum( selectDay ) );
+        this.setDayShift( currentMonth, { shiftName: e.getAttribute('name') } );
         this.createShiftTypeDate( currentMonth, selectDay ); 
       }
       
@@ -89,25 +188,15 @@ export class SetData {
           setDateIcon( document.querySelector( '.select-date' ) );
           this.nextFocus();
         }
-        
         (await streamData).saveData();
       } );
     } );
   }
   
-  // waitSetData()
-  // {
-  //   return new Promise( async resolve => {
-  //     this.shiftType = ( await ( await streamData ).ownData ).data.shiftType;
-  //     this.schedule = ( await ( await streamData ).ownData ).data.shift;
-  //     resolve();
-  //   } );
-  // }
-  
   async waitSetData()
   {
     this.shiftType = ( await ( await streamData ).ownData ).data.shiftType;
-    this.schedule = ( await ( await streamData ).ownData ).data.shift;
+    this.shift = ( await ( await streamData ).ownData ).data.shift;
     return this;
   }
   
@@ -127,25 +216,49 @@ export class SetData {
   
   createShiftTypeDate( date, dateElement )
   {
-    this.waitSetData().then( d => {
-      dateElement.querySelector( '.date-shift-type' )?.remove();
-      const schedule = d.schedule;
+    this.waitSetData().then( d =>
+    {  
+      const schedule = d.shift;
       const shiftType = d.shiftType;
-      if( !schedule[date.format( 'YYYY/MM' )] ) return;
-
-      const shiftName = schedule[date.format( 'YYYY/MM' )][date.format( 'DD' )];
-
-      if( schedule.hasOwnProperty( date.format( 'YYYY/MM' ) ) ){
-        const dateShiftType = document.createElement( 'div' );
-        if( shiftType.hasOwnProperty( shiftName ) ){
-          const shiftInfo = shiftType[shiftName];
-          dateShiftType.classList.add( 'date-shift-type' );
-          dateShiftType.innerText = shiftInfo.initial;
-          dateShiftType.style.background =  shiftInfo.color;
-          dateElement.appendChild( dateShiftType );
-        }
+      const shiftName = this.getDayShift( date );
+      
+      dateElement.querySelector( '.date-shift-type' )?.remove();
+      
+      if( !shiftName ){
+        this.initMonthShift( date );
+        return;
       }
-    } )
+      
+      if( shiftName.shiftName )
+      {
+        const dateShiftType = document.createElement( 'div' );
+        const shiftInfo = shiftType[shiftName.shiftName];
+        
+        dateShiftType.classList.add( 'date-shift-type' );
+        dateShiftType.innerText = shiftInfo.initial;
+        dateShiftType.style.background =  shiftInfo.color;
+
+        if( shiftInfo.color.toRGB().reduce( ( s, v ) => s + v ) > 256 * 3 / 2 )
+          dateShiftType.style.color = '#000';
+        else
+          dateShiftType.style.color = '#FFF';
+
+        dateElement.appendChild( dateShiftType );
+      }
+        
+      if( shiftName.schedule )
+      {
+        this.setPlanFlag( dateElement );
+      }
+    } );
+  }
+  
+  setPlanFlag( dateElement )
+  {
+    const planDiv = document.createElement( 'div' );
+    planDiv.classList.add( 'have-plan' );
+    dateElement.querySelector( '.have-plan' )?.remove();
+    dateElement.appendChild( planDiv );
   }
   
   createIconElement( sData, name = "" )

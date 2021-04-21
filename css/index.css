@@ -10,6 +10,7 @@ body {
   -webkit-user-select: none;
   overflow: hidden;
   overscroll-behavior: none !important;
+  touch-action: manipulation;
 }
 
 .input-form > div > .button {
@@ -20,6 +21,14 @@ body {
   border-radius: 3vw 3vw !important;
   border: 0 !important;
   flex: 1;
+}
+
+#add-plan > .drawer-menu > .drawer-form {
+  height: calc( 80 * var( --vh ) - 50px );
+}
+
+.time-input + label {
+  top: -40% !important;
 }
 
 .input-form > div > input{
@@ -36,11 +45,25 @@ svg {
 div#header {
   position: relative;
 /*   flex: 1; */
-  height: calc( 10 * var( --vh ) );
+/*   height: calc( 7 * var( --vh ) ); */
+  height: 3em;
   color: #4B4B4B;
   display: flex;
-  background: #efef70;
+  background: #FFF;
 	transition:	all 0.2s ease;
+  border-bottom: solid 1px #CCC;
+}
+
+div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ) {
+  transition: background .2s ease;
+}
+
+div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
+  background: #EEE;
+}
+
+div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
+  background: #5295FF;
 }
 
 div#menu-button > svg {
@@ -56,7 +79,7 @@ div#menu {
   position: fixed;
   height: calc( 100 * var( --vh ) );
   width: 70vw;
-  background: #FEDDED;
+  background: #FFF;
   top: 0;
   left: 0;
 	transition:	transform .4s ease;
@@ -73,6 +96,15 @@ div#menu:after {
   height: 100%;
 }
 
+
+div#header.select-mode div#menu:after {
+  left: 0;
+}
+
+#delete-shift-button {
+  color: #000;
+}
+
 #display-name {
   position: relative;
   margin: auto;
@@ -84,7 +116,7 @@ div#menu:after {
 li#menu-list {
   display: flex;
   flex-direction: column;
-  height: calc( 100% - 10 * var( --vh ) );
+  height: calc( 100% - 3em );
 }
 
 li#menu-list > ul {
@@ -101,7 +133,7 @@ li#menu-list > ul:after {
   height: 1px;
   bottom: 0;
   left: 0;
-	background-image: linear-gradient( to left, transparent -25%, #000e 50%, transparent 125% );
+	background: #BBB;
 }
 
 li#menu-list > ul#signout {
@@ -141,7 +173,7 @@ ul#signout.confirm > div {
 }
 
 div#body-wrapper {
-  background: #000;
+  background: #4B4B4B;
   position: fixed;
   top: 0;
   left: 0;
@@ -162,10 +194,128 @@ div#menu-button {
   display: flex;
 }
 
-div#dateWrapper {
+div#menu-header {
+  position: relative;
+/*   height: calc( 10 * var( --vh ) ); */
+  height: 3em;
+  color: #4B4B4B;
+  display: flex;
+  background: #FFF;
+  border-bottom: solid 1px #BBB;
+}
+
+div#menu-header > svg {
+  position: relative;
+  height: 50%;
+  width: auto;
+  right: 5%;
+  padding: 2px;
+  margin: 0 0 0 auto;
+  box-sizing: border-box;
+  opacity: 1;
+  transform: translateY( 50% );
+}
+
+div#date-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#today-plan {
+  flex: 1;
+  position: relative;
+  margin: 2px;
+}
+
+#add-plan {
+  position: absolute;
+  width: 3.5em;
+  height: 3.5em;
+  right: 1em;
+  bottom: 1em;
+  border-radius: 3em;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4285f4;
+  color: #fff;
+  margin: 2px;
+  box-shadow: 1px 2px 5px 1px #0003;
+  transition: background .2s ease;
+}
+
+#add-plan:active {
+  background: #3275e4;
+}
+
+#add-plan:before, #add-plan:after {
+  content: '';
+  position: absolute;
+  top: 1em;
+  left: calc( 50% - ( 2px / 2 ) );
+  width: 2px;
+  height: calc( 100% - ( 1em * 2 ) );
+  border-radius: 1px;
+  background: #FFF;
+  z-index: 1;
+}
+
+#add-plan:after {
+  transform: rotate( 90deg );
+}
+
+#add-plan > #add-plan-message {
+  pointer-events: none;
+}
+
+#plan-list {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 0;
+  overflow-y: scroll;
+  
+}
+
+.plans {
+  align-items: center;
+  background: #77d;
+  color: #FFF;
+  display: flex;
+  flex: 0 0 3em;
+  justify-content: center;
+  margin: 2px;
+  text-align: center;
+}
+
+.have-plan {
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  max-height: 45%;
+  right: 0;
+  bottom: 0;
+  color: #FFF;
+  font-size: 0.9em;
+  position: absolute;
+  pointer-events: none;
+  text-align: center;
+}
+
+.have-plan:before {
+  content: '予';
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 0;
+  height: 0;
+  line-height: 100%;
+  border-style: solid;
+  border-width: 1em;
+  border-color: transparent #88F #88F transparent ;
 }
 
 input#date {
@@ -174,10 +324,9 @@ input#date {
   background: #0000;
   color: #4B4B4B;
   border: 0;
-  font-size: 1.8em;
+  font-size: 1.6em;
   text-align: center;
   position: relative;
-  font-weight: bold;
   line-height: 100%;
 	transition:	opacity 0.2s, color 0s ease;
   outline: 0;
@@ -198,7 +347,7 @@ input#date::-webkit-calendar-picker-indicator {
   width: 100%;
   height: 100%;
   opacity: 0;
-  z-index: -1;
+  z-index: 1;
 }
 input#date::-webkit-date-and-time-value {
   margin-right: 1px;
@@ -224,26 +373,6 @@ div#header > div > svg {
   transform: translateY( 50% );
 }
 
-div#menu-header {
-  position: relative;
-  height: calc( 10 * var( --vh ) );
-  color: #4B4B4B;
-  display: flex;
-  background: #efef70;
-}
-
-div#menu-header > svg {
-  position: relative;
-  height: 50%;
-  width: auto;
-  right: 5%;
-  padding: 2px;
-  margin: 0 0 0 auto;
-  box-sizing: border-box;
-  opacity: 1;
-  transform: translateY( 50% );
-}
-
 div#prev-month-button {
   position: relative;
   flex: 1;
@@ -266,19 +395,22 @@ div#settings {
   display: flex;
 }
 
+#settings > .drawer-menu > .drawer-form {
+  height: calc( 25 * var( --vh ) );
+}
+
 .date-shift-type {
   height: 1.5em;
+  max-height: 40%;
   background: #f55;
-  border-radius: 10px 10px;
-  bottom: 5%;
+  bottom: 0;
   color: #fff;
   font-size: 0.9em;
-  position: relative;
   position: absolute;
   pointer-events: none;
-  left: -2px;
+  left: 0px;
   text-align: center;
-  width: calc( 100% + 4px );
+  width: 100%;
 }
 
 #icon-preview {
@@ -312,9 +444,9 @@ div.drawer-menu:after {
   content: '';
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc( 100% + 1px );
   background: #fff;
-  top: 100%;
+  bottom: -100%;
   z-index: 11;
 }
 
@@ -323,6 +455,7 @@ div.menu-handle {
   top: -50px;
   width: 100%;
   height: 50px;
+  border-top: solid 1px #CCC;
   border-radius: 25px 25px 0 0;
   background: #fff;
 }
@@ -382,22 +515,51 @@ div#menu-button > svg, div#settings > svg{
 
 div#content-wrapper {
   flex: 1;
-  height: calc( 80 * var( --vh ) - 10px );
+/*   height: calc( 100 * var( --vh ) - 6em ); */
+  height: 0px;
   display: flex;
   flex-direction: column;
 	transition:	all 0.5s ease;
+  background: #EAEAEA;
 }
 
-div#content-wrapper > div#day {
+div#content-wrapper.month > div#calendar-wrapper {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+}
+
+div#content-wrapper.week > div#calendar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+div#content-wrapper.list > div#calendar-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+div#content-wrapper.share > div#calendar-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+div#content-wrapper > div#calendar-wrapper > div#day {
   display: flex;
   text-align: center;
   font-weight: bold;
+  color: #4B4B4B;
+  background: #EAEAEA;
 }
 
-div#content-wrapper > div#day > div {
+div#content-wrapper > div#calendar-wrapper > div#day > div {
   flex: 1;
 }
-div#content-wrapper.month > div#calendar {
+
+div#content-wrapper.month > div#calendar-wrapper > div#calendar {
   position: relative;
   flex: 4;
   width: 100%;
@@ -406,7 +568,7 @@ div#content-wrapper.month > div#calendar {
   scroll-snap-type: x mandatory;
 }
 
-div#content-wrapper.week > div#calendar {
+div#content-wrapper.week > div#calendar-wrapper > div#calendar {
   position: relative;
   flex: 1;
   width: 100%;
@@ -415,7 +577,7 @@ div#content-wrapper.week > div#calendar {
   scroll-snap-type: x mandatory;
 }
 
-div#content-wrapper.list > div#calendar {
+div#content-wrapper.list > div#calendar-wrapper > div#calendar {
   position: relative;
   flex: 1;
   width: 100%;
@@ -423,53 +585,64 @@ div#content-wrapper.list > div#calendar {
   overflow: hidden;
   scroll-snap-type: x mandatory;
 }
-/* 
-div#content-wrapper.list > div#plan {
-  display: none;
-} */
 
-div#content-wrapper.month > div#calendar > div {
+div#content-wrapper.share > div#calendar-wrapper > div#calendar {
+  position: relative;
+  width: 20%;
+  display: flex;
+  flex-shrink: 0;
+  overflow: hidden;
+  scroll-snap-type: x mandatory;
+  margin-top: calc( 1.5em + 2px );
+}
+
+div#content-wrapper.month > div#calendar-wrapper > div#calendar > div {
   flex-shrink: 0;
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #FEDDED;
   scroll-snap-align: start;
 }
 
-div#content-wrapper.week > div#calendar > div {
+div#content-wrapper.week > div#calendar-wrapper > div#calendar > div {
   flex-shrink: 0;
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
-  background: #FEDDED;
   scroll-snap-align: start;
   overflow: scroll;
 }
 
-
-div#content-wrapper.list > div#calendar > div {
+div#content-wrapper.list > div#calendar-wrapper > div#calendar > div {
   flex-shrink: 0;
   flex-direction: column;
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  background: #FEDDED;
   scroll-snap-align: start;
   overflow: scroll;
 }
 
-div#content-wrapper.month > div#calendar > div > .week {
+div#content-wrapper.share > div#calendar-wrapper > div#calendar > div {
+  flex-shrink: 0;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  overflow: hidden;
+}
+
+div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week {
   flex: 5;
   display: flex;
 }
 
-div#content-wrapper.week > div#calendar > div > .week {
+div#content-wrapper.week > div#calendar-wrapper > div#calendar > div > .week {
   width: auto;
   flex-shrink: 0;
   display: flex;
@@ -482,80 +655,169 @@ div#content-wrapper.list > div#calendar > div > .week {
   flex-direction: column;
 }
 
-div#content-wrapper.month > div#calendar > div > .week > .date {
-  position: relative;
-  background: #eee;
-  border: 1px solid #000;
-  border-radius: 10%;
-  margin: 2px;
-  padding: 2px;
-  flex: 1;
-  color: #000;
+div#content-wrapper.share > div#calendar > div > .week {
+  width: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-div#content-wrapper.week > div#calendar > div > .week > .date {
+div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  background: #eee;
-  border: 1px solid #000;
-  border-radius: 10%;
-  margin: 2px;
+  border: 1px solid #0000;
+  margin: 1px;
+  padding: 2px;
+  width: 0;
+  flex: 1;
+  color: #4B4B4B;
+  background: #FFF;
+}
+
+div#content-wrapper.week > div#calendar-wrapper > div#calendar > div > .week > .date {
+  position: relative;
+  border: 1px solid #0000;
+  margin: 1px;
   padding: 2px;
   flex: 1;
-  color: #000;
+  color: #4B4B4B;
+  background: #FFF;
   box-sizing: border-box;
   width: calc( 100vw / 7 - 2px * 2 );
 }
 
-div#content-wrapper.list > div#calendar > div > .week > .date {
+div#content-wrapper.list > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  background: #eee;
-  border: 1px solid #000;
-  border-radius: 10px;
-  margin: 2px;
+  border: 1px solid #0000;
+  margin: 1px;
   padding: 2px;
-  color: #000;
+  color: #4B4B4B;
+  background: #FFF;
   box-sizing: border-box;
   width: auto;
-  height: calc( 100 * var( --vh ) / 10 );
+  height: calc( 60 * var( --vh ) / 10 );
+  min-height: 3em;
 }
-div#content-wrapper.month > div#calendar > div > .week > .date > .day {
+
+div#content-wrapper.share > div#calendar-wrapper > div#calendar > div > .week > .date {
+  position: relative;
+  border: 1px solid #0000;
+  margin: 1px;
+  padding: 2px;
+  color: #4B4B4B;
+  background: #FFF;
+  box-sizing: border-box;
+  width: auto;
+  height: calc( 60 * var( --vh ) / 10 );
+  min-height: 3em;
+}
+
+div#content-wrapper > div#calendar-wrapper > div#calendar > div > .week > .date > .day {
+  display: inline-block;
+  margin-left: .4em;
+}
+
+div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week > .date > .day {
   display: none;
 }
 
-div#content-wrapper:not( .month ) > div#day {
+div#content-wrapper:not( .month ) > div#calendar-wrapper > div#day {
   display: none;
 }
-div#content-wrapper.month > div#calendar > div > .week > .date.not-this-month {
-  background: #ccc;
+div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week > .date.not-this-month {
+  background: #EAEAEA;
   opacity: .7;
 }
 
-div#content-wrapper.week > div#calendar > div > .week > .date.not-this-month,
-div#content-wrapper.list > div#calendar > div > .week > .date.not-this-month {
+div#content-wrapper.week > div#calendar-wrapper > div#calendar > div > .week > .date.not-this-month,
+div#content-wrapper.list > div#calendar-wrapper > div#calendar > div > .week > .date.not-this-month,
+div#content-wrapper.share > div#calendar-wrapper > div#calendar > div > .week > .date.not-this-month {
   display: none;
 }
 
+div#share-wrapper {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+div#share-wrapper > div#name-wrapper {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+
+div#share-list {
+  width: 100%;
+  height: calc( 100% - 1.5em );
+  display: flex;
+  overflow: scroll;
+}
+
+div#share-wrapper > div#name-wrapper > div.share-name {
+  text-align: center;
+  width: 20vw;
+  height: 1.5em;
+  margin: 1px;
+  border: 1px solid #0000;
+  background: #FFF;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+div#share-list > div.share-date-wrapper {
+  width: 20vw;
+  height: 100%;
+  margin: 0 1px;
+  flex-shrink: 0;
+}
+
+div#share-list > div.share-date-wrapper > div.share-date {
+  height: calc( 60 * var( --vh ) / 10 );
+  min-height: 3em;
+  margin: 1px 0;
+  border: 1px solid #0000;
+  background: #FFF;
+  box-sizing: border-box;
+}
+
 #calendar, #plan {
-  transition: all .2s;
+  transition: all .2s ease;
+}
+
+div#content-wrapper.list > div#calendar-wrapper > div#calendar,
+div#content-wrapper.share > div#calendar-wrapper > div#calendar {
+  transition: all 0s ease;
 }
 
 .date {
-  transition: background .2s ease;
+  transition: background .2s ease, height .2s ease;
 }
 
 .date:first-of-type, #day > div:first-of-type {
-  color: #f00 !important;
+  color: #f33 !important;
 }
 .date:last-of-type, #day > div:last-of-type {
-  color: #00f !important;
+  color: #33f !important;
 }
 
-div#content-wrapper > div#calendar > div > div.week > div.date.today {
-  background: #ff5;
+div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.today {
+  background: #ff05;
+  border-color: #0000;
 }
 
-div#content-wrapper > div#calendar > div > div.week > div.date.select-date {
-  background: #efaf40;
+div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.select-date {
+  background: #4285f455;
+  border-color: #0000;
+}
+
+div#content-wrapper.month > div#calendar-wrapper > div#share-wrapper,
+div#content-wrapper.week > div#calendar-wrapper > div#share-wrapper,
+div#content-wrapper.list > div#calendar-wrapper > div#share-wrapper {
+  display: none;
+}
+
+div#content-wrapper.share > div#calendar-wrapper > div#share-wrapper {
+  flex: 1;
 }
 
 div.check-box {
@@ -564,7 +826,7 @@ div.check-box {
   right: 5%;
   width: 1.2em;
   height: 1.2em;
-  border: 1px #000 solid;
+  border: 1px #4B4B4B solid;
   border-radius: 50%;
   box-sizing: border-box;
   background: #fff;
@@ -594,49 +856,48 @@ div.isselected > svg {
   opacity: 1;
 } 
 
+div#content-wrapper > div#plan {
+  position: relative;
+  color: #4B4B4B;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  border-top: solid 1px #CCC;
+  
+}
 
 div#content-wrapper.month > div#plan {
   flex: 2;
-  color: white;
-  background: #FEDDED;
-  display: flex;
-  flex-direction: column;
 }
 
 div#content-wrapper.week > div#plan {
   flex: 5;
-  color: white;
-  background: #FEDDED;
-  display: flex;
-  flex-direction: column;
 }
 
 div#content-wrapper.list > div#plan {
   display: none;
 }
 
-div#content-wrapper > div#plan > div {
-  flex: 1;
-  background: #0001;
-  position: relative;
-  margin: 2px 0;
+div#content-wrapper.share > div#plan {
+  display: none;
 }
 
 div#footer {
   position: relative;
   bottom: 0;
-  height: calc( 10 * var( --vh ) );
+  height: 3em;
   display: flex;
-  color: white;
-  background: #efef70;
+  background: #FFF;
   flex-direction: row;
   padding: 5px 0;
+  border-top: solid 1px #CCC;
 }
 
 div#footer div{
+  position: relative;
   flex: 1;
-  color: black;
-  font-size: 1em;
+  color: #4B4B4B;
+  font-size: .9em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -644,10 +905,47 @@ div#footer div{
   white-space: nowrap;
 }
 
+div#footer > div:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: calc( 100% + 10px );
+  left: 0;
+  bottom: -5px;
+  transition: background .2s ease;
+}
+
+div#footer > div:active:after {
+  background: #1a73e822;
+}
+
 div#footer > svg {
   padding: 3px 0;
 }
 
+div#footer:after {
+  content: '';
+  position: absolute;
+  width: 25%;
+  height: 5px;
+  background: #1a73e8;
+  left: 0;
+  bottom: 0;
+  transition: transform .3s ease;
+}
+
+div#content-wrapper.month + div#footer:after {
+  transform: translateX( 0 );
+}
+div#content-wrapper.week + div#footer:after {
+  transform: translateX( 100% );
+}
+div#content-wrapper.list + div#footer:after {
+  transform: translateX( 200% );
+}
+div#content-wrapper.share + div#footer:after {
+  transform: translateX( 300% );
+}
 
 .svg-view {
   position: relative;
@@ -666,9 +964,50 @@ div#week-calendar {
 div#share {
 
 }
+@media screen and ( min-width: 769px ) {
+  div#menu:after {
+    left: 0;
+  }
+  
+  div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {
+    background: #EEE;
+  }
+  
+  div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
+    background: #DDD;
+  }
+  
+  div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {
+    background: #5295FF;
+  }
+  
+  div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
+    background: #62A5FF;
+  }
+  
+  div#footer > div:hover:after {
+    background: #1a73e822;
+  }
+  div#footer > div:active:after {
+    background: #1a73e844;
+  }
+  
+}
 
 @media screen and ( min-aspect-ratio: 1 / 1 ) {
-  div#content-wrapper {
+  
+  div#content-wrapper.month {
     flex-direction: row;
+  }
+  
+  div.drawer-menu {
+    width: calc( 100vw / 3 );
+  }
+  div.drawer-menu > div.drawer-form {
+    max-height: calc( 100 * var( --vh ) - 50px - 3em );
+  }
+  
+  div.shift-type {
+    width: 50%;
   }
 }

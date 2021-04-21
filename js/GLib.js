@@ -17,6 +17,11 @@ Date.prototype.format = function( format ){
 	.replace( /DATE/, this );
 };
 
+String.prototype.toRGB = function(){
+  if( this.match( /#....../ ) )
+    return [ parseInt( this.substring( 1,3 ), 16 ), parseInt( this.substring( 3, 5 ), 16 ), parseInt( this.substring( 5, 7 ), 16 ) ];
+};
+
 Array.prototype.last = function(){
   return this.slice(-1)[0];
 }
@@ -31,6 +36,7 @@ NodeList.prototype.last = function(){
   return [...this].last();
 }
 
+
 function len( obj )
 {
   return Object.keys( obj ).length;
@@ -44,4 +50,30 @@ function elementsToDict( elements ) {
 
 function inputCheck( dict ) {
   return Object.values( dict ).every( v => v );
+}
+
+function getDateFromDateElement( element )
+{
+  if( !element.classList.contains( 'date' ) ) return;
+  const date = new Date( document.querySelector( 'input#date' ).value );
+  switch( element.parentNode.parentNode.id ){
+    case 'prev-month':
+      date.setMonth( date.getMonth() - 1 );
+    return;
+    case 'next-month':
+      date.setMonth( date.getMonth() + 1 );
+    return;
+  }
+  
+  if( element.classList.contains( 'not-this-month' ) ){
+    if( [...element.parentNode.parentNode.querySelectorAll( '.date' )].indexOf( element ) < 7 * 6 / 2 ){
+      date.setMonth( date.getMonth() - 1 );
+    }else{
+      date.setMonth( date.getMonth() + 1 );
+    }
+  }
+  
+  date.setDate( element.textContent.match( /^\d+/ ) );
+  
+  return date;
 }
