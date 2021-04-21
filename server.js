@@ -74,7 +74,7 @@ app.use( async( req, res, next ) => {
   
   if( req.url === '/savedata' ){
     if( fs.existsSync(`.data/${req.cookies.SID}.json`) ){
-      fs.writeFile( `.data/${req.cookies.SID}.json`, JSON.stringify(req.body), ( err ) => {
+      fs.writeFile( `.data/${req.cookies.SID}.json`, req.body, ( err ) => {
         if( err ){
           res.send( 'error' ); return;
         } 
