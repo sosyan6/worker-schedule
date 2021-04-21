@@ -1,38 +1,14 @@
 {
   "loginInfo" : { "name" : "", "password" : "" },
   "data" : {
-    "shiftType" : {
-      "日勤1" : {
-        "initial": "日",
-        "sharp" : "circle",
-        "color" : "red"
-      },
-      "日勤2" : {
-        "initial": "日",
-        "sharp" : "rect",
-        "color" : "red"
-      },
-      "日勤3" : {
-        "initial": "日",
-        "sharp" : "circle",
-        "color" : "red"
-      },
-      "日勤4" : {
-        "initial": "日",
-        "sharp" : "rect",
-        "color" : "red"
-      }
-    },
+    "shiftType" : { },
     "shift" : {
-      "202103" : {
-        "1" : {
-        }
+      "2021/03" : {
+        "01" : "日勤1",
+        "02" : ""
       },
-      "202104" : {
-        "1" : {
-        },
-        "2" : {   
-        }
+      "2021/04" : {
+        "01": ""
       }
     }
   }

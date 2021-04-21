@@ -5,19 +5,27 @@ export class LeftMenu
     
     this.startPos = {};
     this.difference = 0;
+    this.isOpen = false;
+    this.menu = document.querySelector( '#menu' );
+    this.hidder = document.querySelector( '#body-wrapper' );
     
     this.addMenuEvent();
     this.addSignOutEvent();
     
-    const menu = document.querySelector( '#menu' );
+    this.menu.addEventListener( 'touchstart', ( e ) => this.onTouch( e ) );
+    this.menu.addEventListener( 'touchmove', ( e ) => this.onMove( e ) );
+    this.menu.addEventListener( 'touchend', ( e ) => this.onEnd( e ) );
   }
   
   addMenuEvent()
   {
     const menuButton = document.querySelector( 'div#menu-button' );
     
-    menuButton.addEventListener( 'click', () => menuButton.classList.add( 'clicked' ) );
-    document.querySelector( 'div#body-wrapper' ).addEventListener( 'click', () => menuButton.classList.remove( 'clicked' ) );
+    menuButton.addEventListener( 'click', ( e ) => {
+      if( !e.target.isEqualNode( menuButton )  ) return;
+      this.open();
+    } );
+    this.hidder.addEventListener( 'click', () => this.close() );
   }
   
   addSignOutEvent()
@@ -37,5 +45,73 @@ export class LeftMenu
         signout.classList.remove( 'confirm' );
       }
     } );
+  }
+  
+  
+  onTouch( e )
+  {
+    if( !e.touches ) return;
+    this.startPos.x = e.touches[0].clientX;
+    this.difference = 0;
+    this.menu.style.transition = 'transform 0ms';
+  }
+  
+  onMove( e )
+  {
+    if( !e.touches ) return;
+    const rect = this.menu.getBoundingClientRect();
+    this.difference = e.touches[0].clientX - this.startPos.x;
+    if( this.difference - ( this.isOpen ? 0 : rect.width ) < 0 ){
+      this.menu.style.transform = `translateX( ${ this.difference - ( this.isOpen ? 0 : rect.width ) }px )`;
+    }else{
+      this.menu.style.transform = `translateX( 0px )`;
+    }
+    this.hidder.style.opacity = 0.7 * ( 1 + rect.left / rect.width );
+  }
+  
+  onEnd( e ){
+    if( !e.touches ) return;
+    const rect = this.menu.getBoundingClientRect();
+    if( this.isOpen ){
+      if( this.difference < 0 ) {
+        if( this.difference < -rect.width * 0.2 ){
+          this.close();
+        }else{
+          this.open();
+        }
+      }else{
+        this.open();
+      }
+    }else{
+      if( this.difference > 0 ) {
+        if( this.difference > rect.width * 0.2 ){
+          this.open();
+        }else{
+          this.close();
+        }
+      }else{
+        this.close();
+      }
+      
+    }
+    this.menu.style.transition = '';
+  }
+  
+  open()
+  {
+    this.menu.style.transform = `translateX( 0 )`;
+    this.hidder.style.pointerEvents = `all`;
+    this.hidder.style.opacity = `.7`;
+    this.menu.dispatchEvent( new Event( 'onopen' ) );
+    this.isOpen = true;
+  }
+  
+  close()
+  {
+    this.menu.style.transform = ``;
+    this.hidder.style.pointerEvents = ``;
+    this.hidder.style.opacity = ``;
+    this.menu.dispatchEvent( new Event( 'onclose' ) );
+    this.isOpen = false;
   }
 }

@@ -2,12 +2,6 @@ export class Calendar
 {
   constructor()
   {
-    this.sample = {
-      '休み': {
-        'color' : '#555',
-      },
-    };
-    
     this.baseDate = new Date();
     this.currentDate = new Date( this.baseDate );
     this.generateCalendar();
@@ -21,7 +15,7 @@ export class Calendar
   {
     const calendar = document.querySelector( 'div#calendar' );
     // カレンダー部分を動的に生成する
-    calendar.querySelectorAll( ':scope > div' ).forEach( ( m ) => {
+    calendar.querySelectorAll( ':scope > div' ).forEach( async ( m ) => {
       const week = document.createElement( 'div' );
       week.classList.add( 'week' );
 
@@ -37,23 +31,14 @@ export class Calendar
               289.878,367.055 512,144.945 	" style="fill: #FFF;"></polygon>
           </g>
         </svg>`;
-      const dateShiftType = document.createElement( 'div' );
-      dateShiftType.classList.add( 'dateShiftType' );
-      dateShiftType.innerText = '休み';
-
-      dateShiftType.style.background = this.sample['休み'].color;
-
+      
       date.appendChild( checkBox );
-      date.appendChild( dateShiftType );
 
       const weekFragment = new DocumentFragment();
-
       for( let d = 0; d < 7; d++ ){
         weekFragment.append( date.cloneNode( true ) );
       }
-
       week.append( weekFragment );
-
       const monthFragment = new DocumentFragment();
       for( let w = 0; w < 6; w++ ){
         monthFragment.append( week.cloneNode( true ) );
@@ -69,17 +54,21 @@ export class Calendar
     //カレンダーのスクロールを捕捉
     calendar.addEventListener( 'scroll', () => {
       if( calendar.scrollLeft <= 0 ){  // スクロール位置が左端なら
+        document.querySelectorAll( '.date' ).forEach( e => e.removeAttribute( 'style' ) );
         this.setCurrentMonth( { direction: -1 } );  // 月を1つ戻す
         calendar.scrollTo( calendar.scrollLeft + calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
+        document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
       }else if( calendar.scrollLeft >= calendar.offsetWidth * 2 ){  // スクロール位置が右端なら
+        document.querySelectorAll( '.date' ).forEach( e => e.removeAttribute( 'style' ) );
         this.setCurrentMonth( { direction: 1 } );  // 月を1つ進める
         calendar.scrollTo( calendar.scrollLeft - calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
+        document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
       }else if( calendar.scrollLeft < calendar.offsetWidth * 0.5 ){  // スクロール位置が左と中央の境目なら
         // 見かけ上でのみ年月を変更
-        document.querySelector( 'input#date' ).value = `${ this.currentDate.getMonth() ? this.currentDate.getFullYear() : this.currentDate.getFullYear() - 1 }-${ String( this.currentDate.getMonth() ? this.currentDate.getMonth() : 12 ).padStart( 2, 0 ) }`
+        document.querySelector( 'input#date' ).value = ( new Date( this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1 ) ).format( 'YYYY-MM' );
       }else if( calendar.scrollLeft > calendar.offsetWidth * 1.5 ){  // スクロール位置が右と中央の境目なら
         // 見かけ上でのみ年月を変更
-        document.querySelector( 'input#date' ).value = `${ this.currentDate.getMonth() === 11 ? this.currentDate.getFullYear() + 1 : this.currentDate.getFullYear() }-${ String( this.currentDate.getMonth() === 11 ? 1 : this.currentDate.getMonth() + 2 ).padStart( 2, 0 ) }`
+        document.querySelector( 'input#date' ).value = ( new Date( this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1 ) ).format( 'YYYY-MM' );
       }else{  // スクロール位置が中央（デフォルト）なら
         // 見かけ上の年月の変更を戻す
         // document.querySelector( 'div#date' ).innerHTML = `${ this.currentDate.getFullYear() }年${ this.currentDate.getMonth() + 1 }月`
@@ -96,10 +85,20 @@ export class Calendar
       this.setCurrentMonth( { year: value[0], month: value[1] - 1 } );
     } );
 
-    document.querySelector( 'div#prevMonth' ).addEventListener( 'click', () => {
+    document.querySelector( 'div#prev-month-button' ).addEventListener( 'click', function(){
+      document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.display = 'block' );
       calendar.scrollBy( { top: 0, left: -thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
-    document.querySelector( 'div#nextMonth' ).addEventListener( 'click', () => {
+    document.querySelector( 'div#next-month-button' ).addEventListener( 'click', function(){
+      document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#eee' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
+      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.display = 'block' );
       calendar.scrollBy( { top: 0, left: thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
   }
@@ -107,11 +106,13 @@ export class Calendar
   initDisplayDate()
   {
     const monthNode = document.querySelectorAll( 'div#calendar > div' );
-    monthNode.forEach( ( monthElement, m ) => {
+    monthNode.forEach( async( monthElement, m ) => {
       const tempDate = new Date( this.currentDate );
       m -= Math.floor( monthNode.length / 2 );
       tempDate.setMonth( this.currentDate.getMonth() + m );
-      this.createMonth( monthElement, tempDate );
+      this.optimizeDate( tempDate );
+      this.createMonth( monthElement, new Date( tempDate ) );
+      // (await setData).setShiftTypeDate( monthElement, new Date( tempDate ) );
     } );
   }
   
@@ -130,15 +131,15 @@ export class Calendar
   
   createMonth( element, creatingDate )
   {
-    this.optimizeDate( creatingDate );
-    this.loopMonth( element, ( data ) => 
+    this.loopMonth( element, async ( data ) => 
     {
-      data.date.innerHTML = data.date.innerHTML.replace( /\d*/, creatingDate.getDate() );
+      data.date.innerHTML = data.date.innerHTML.replace( /\d*(<div class="day">\n.<\/div>)*/, creatingDate.format( `DD<div class = 'day'>\ndd</div>` ) );
       
        // addEventListener内だとcreatingDateの値がおかしくなるので、ここでその時のループの値を保存しておく。
       const savedDate = new Date( creatingDate );
       
       data.date.addEventListener( 'click', () => {
+        if( document.querySelector( 'div#settings' ).classList.contains( 'clicked' ) ) return;
         document.querySelectorAll( '.select-date' ).forEach( ( e ) => e.classList.remove( 'select-date' ) );
         data.date.classList.add( 'select-date' );
         this.setCurrentDate( savedDate );
@@ -151,29 +152,42 @@ export class Calendar
       }else if( data.date.classList.contains( 'today' ) ){
         data.date.classList.remove( 'today' );
       }
+      
+      if( this.currentDate.format( 'YYYY/MM' ) === creatingDate.format( 'YYYY/MM' ) ){
+        data.date.classList.remove( 'not-this-month' );
+      }else{
+        data.date.classList.add( 'not-this-month' );
+      }
+      
+    setData.then( s => {
+      s.createShiftTypeDate( savedDate, data.date );
+    } );
+      
       creatingDate.setDate( creatingDate.getDate() + 1 );
     } );
   }
   
-  setCurrentMonth( yearAndMonth )
+  setCurrentMonth( option )
   {
-    if( yearAndMonth.direction ){
-      this.currentDate.setMonth( this.currentDate.getMonth() + yearAndMonth.direction );
+    console.log( this.currentDate );
+    if( option.direction ){
+      this.currentDate.setMonth( this.currentDate.getMonth() + option.direction );
     }else{
-      this.currentDate.setYear( yearAndMonth.year || this.baseDate.getFullYear() );
-      this.currentDate.setMonth( yearAndMonth.month );
+      this.currentDate.setYear( option.year || this.baseDate.getFullYear() );
+      this.currentDate.setMonth( option.month  || this.baseDate.getMonth() );
     }
     this.setCurrentDate( this.currentDate );
     this.initDisplayDate();
+    this.setIndexDate();
   }
   
   setCurrentDate( date = this.baseDate )
   {
-    document.querySelector( 'div#today-view' ).innerText = date.format( 'MM/DD(d)' );
+    document.querySelector( 'div#today-view' ).innerText = date.format( 'MM/DD(dd)' );
   }
   
   setIndexDate()
   {
-    document.querySelector( 'input#date' ).value = `${ this.currentDate.getFullYear() }-${ String( this.currentDate.getMonth() + 1 ).padStart( 2, 0 ) }`;
+    document.querySelector( 'input#date' ).value = this.currentDate.format( 'YYYY-MM' );
   }
 }

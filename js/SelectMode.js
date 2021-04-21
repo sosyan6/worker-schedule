@@ -2,17 +2,20 @@ export class SelectMode  // 選択モード用class
 {
   constructor()
   {
-    this.classList = document.querySelector( 'div#settings' ).classList
-    this.isSelectMode = false;  // 選択モード
-    this.onMoveBind = this.onMove.bind( this );  // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
-    // コメント飽きた
-    document.querySelectorAll( 'div#this-month div.date' ).forEach( ( date ) => {
-      $( date ).longpress( () => {  // ここでコメントが途絶えている・・・
-        if( !this.isSelectMode ){
-          this.isSelectMode = true;
-          this.select( date );
-        }
-      }, () => {}, 300 );
+    calendar.then( () => {
+      this.classList = document.querySelector( 'div#settings' ).classList;
+      this.isSelectMode = false;  // 選択モード
+      this.onMoveBind = this.onMove.bind( this );  // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
+      this.onClickBind = this.onClick.bind( this );  // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
+      // コメント飽きた
+      document.querySelectorAll( 'div#this-month div.date' ).forEach( ( date ) => {
+        $( date ).longpress( () => {  // ここでコメントが途絶えている・・・
+          if( !this.isSelectMode ){
+            this.isSelectMode = true;
+            this.select( date );
+          }
+        }, () => {}, 300 );
+      } );
     } );
   }
   
@@ -57,8 +60,9 @@ export class SelectMode  // 選択モード用class
     } );
     date.querySelector( 'div.check-box' ).classList.add( 'isselected' );
 
-    document.querySelector( 'div#settings' ).addEventListener( 'click', () => this.cancel(), { once: true } );
+    document.querySelector( 'div#settings' ).addEventListener( 'click', this.onClickBind );
     document.querySelector( 'div#settings' ).classList.add( 'cancel' );
+    document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
 
     document.addEventListener( 'touchmove', this.onMoveBind );
     document.addEventListener( 'mousemove', this.onMoveBind );
@@ -89,17 +93,16 @@ export class SelectMode  // 選択モード用class
     document.removeEventListener( 'mousemove', this.onMoveBind );
     
     this.isSelectMode = false;
+    
+    document.querySelector( 'div#settings' ).removeEventListener( 'click', this.onClickBind );
     document.querySelector( 'div#settings' ).classList.remove( 'cancel' );
+    document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'close' ) );
   }
   
   onTouch( e )
   {
-    const c = e.target.querySelector( 'div.check-box' );
-    if( c.classList.contains( 'isselected' ) ){
-      c.classList.remove( 'isselected' );
-    }else{
-      c.classList.add( 'isselected' );
-    }
+    if( e.target.classList.contains( 'not-this-month' ) ) return;
+    e.target.querySelector( 'div.check-box' ).classList.toggle( 'isselected' );
   }
   
   onMove( e )
@@ -112,6 +115,7 @@ export class SelectMode  // 選択モード用class
           clientX < rect.x + rect.width &&
           clientY > rect.y &&
           clientY < rect.y + rect.height ){
+        if( d.classList.contains( 'not-this-month' ) ) return;
         if( e.target.querySelector( 'div.check-box' ).classList.contains( 'isselected' ) ){
           d.querySelector( 'div.check-box' ).classList.add( 'isselected' );
         }else{
@@ -119,5 +123,11 @@ export class SelectMode  // 選択モード用class
         }
       }
     } );
+  }
+  
+  onClick( e )
+  {
+    if( !e.target.isEqualNode( document.querySelector( 'div#settings' ) )  ) return;
+    this.cancel();
   }
 }

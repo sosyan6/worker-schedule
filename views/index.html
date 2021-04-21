@@ -25,6 +25,7 @@
       <div id="menu-button">
         <div id="menu">
           <div id = "menu-header">
+            <div id = "display-name">名無しさん</div>
             <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
               <g>
                 <rect y="16" class="st0" width="512" height="96" rx = "48" ry = "48"></rect>
@@ -56,7 +57,7 @@
         </svg>
       </div>
       <div id="body-wrapper"></div>
-      <div id = "prevMonth">
+      <div id = "prev-month-button">
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
           
           <g>
@@ -68,7 +69,7 @@
         <input type = "month" id = "date" >
         <div id = "select">選択モード</div>
       </div>
-      <div id = "nextMonth">
+      <div id = "next-month-button">
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
           
           <g>
@@ -79,32 +80,46 @@
       <div id = "settings">
         <div class = "drawer-menu">
           <div id = "shift-type-select">
-            <div id = "add-shift-button" class = "shift-type">
+            <div id = "delete-shift-button" class = "shift-type not-disappear-button">
+              
+            </div>
+            <div id = "add-shift-button" class = "shift-type not-disappear-button">
               <!--  shift-type-config start    -->
               <div class = "drawer-menu">
                 <div id = "shift-type-config" class = "">
                   <div class = "input-form">
+                
+                    <div>
+                      <input name = "shiftName" placeholder=" " maxlength = "20">
+                      <label>シフトの名前</label>
+                    </div>
+                    
                     <div>
                       <input name = "initial" placeholder=" " maxlength = "2">
                       <label>シフトの頭文字（2文字まで）</label>
-                      </div>
+                    </div>
+                    
                     <div>
-                      <input type = "color" name = "color" placeholder=" ">
+                      <input type = "color" name = "color" placeholder=" " value = "#ff0000">
                       <label>色</label>
                     </div>
+                    
                     <div>
                       <select class = "input-form" name = "sharp">
-                        <option>四角形</option>
-                        <option>円形</option>
+                        <option value = "rect">四角形</option>
+                        <option value = "circle">円形</option>
                       </select>
                     </div>
+                    
                     <div class = "yes-no">
+                      <div id = "icon-preview"></div>
                       <div class = "button"><div class = "button-text">作成</div></div>
                     </div>
                   </div>
                 </div>
               </div>
               <!--   shift-type-config end  -->
+              
               <svg height="448pt" viewbox="0 0 448 448" width="448pt"><path d="m408 184h-136c-4.417969 0-8-3.582031-8-8v-136c0-22.089844-17.910156-40-40-40s-40 17.910156-40 40v136c0 4.417969-3.582031 8-8 8h-136c-22.089844 0-40 17.910156-40 40s17.910156 40 40 40h136c4.417969 0 8 3.582031 8 8v136c0 22.089844 17.910156 40 40 40s40-17.910156 40-40v-136c0-4.417969 3.582031-8 8-8h136c22.089844 0 40-17.910156 40-40s-17.910156-40-40-40zm0 0"/></svg>
             </div>
           </div>
@@ -128,6 +143,15 @@
     
     <!--  calender start -->
     <div id = "content-wrapper" class = "month">
+      <div id = "day">
+        <div>日</div>
+        <div>月</div>
+        <div>火</div>
+        <div>水</div>
+        <div>木</div>
+        <div>金</div>
+        <div>土</div>
+      </div>
       <div id="calendar">
 <!--         <div id = "2prev-month"></div> -->
         <div id = "prev-month"></div>

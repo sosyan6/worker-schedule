@@ -20,6 +20,7 @@
   flex-wrap: wrap;
   height: calc( 25 * var( --vh ) );
   width: 100%;
+  overflow: scroll;
 }
 
 div.shift-type > svg {
