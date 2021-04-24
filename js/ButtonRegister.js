@@ -6,9 +6,10 @@ export class ButtonRegister
     this.addShiftButton = document.querySelector( 'div#add-shift-button' );
     this.deleteShiftButton = document.querySelector( '#delete-shift-button' );
     this.createShift = document.querySelector( '.ok-button > .button' );
+    this.createGroup = document.querySelector( '#group-form-button' );
     this.createPlan = document.querySelector( '#add-plan-button' );
+    this.addGroup = document.querySelector( '#add-group-button' );
     this.addPlan = document.querySelector( '#add-plan' );
-    this.createGroup = document.querySelector( '#create-group-button' );
     // this.stream = streamData;
     
     this.registButton();
@@ -16,6 +17,7 @@ export class ButtonRegister
   
   registButton()
   {
+    
     this.setting.addEventListener( 'click', ( e ) => {
       if( this.setting.classList.contains( 'cancel' ) || !e.target.isEqualNode( this.setting )  ) return;
       this.setting.querySelector( '.drawer-menu' ).dispatchEvent( new Event( 'open' ) );
@@ -33,14 +35,29 @@ export class ButtonRegister
       this.addPlan.querySelector( '.drawer-menu' ).dispatchEvent( new Event( 'open' ) );
     } );
     
-    this.createGroup.addEventListener( 'click', function() {
-      this.querySelector( '.full-screen-form' ).style.transform = 'translateX( 0 )';
+    
+    this.createGroup.addEventListener( 'click', ( e ) => {
+      if( !e.target.isEqualNode( this.createGroup ) ) return;
+      document.querySelector( '#menu' ).dispatchEvent( new Event( 'close' ) );
+      document.querySelector( '#create-group-form' ).parentElement.dispatchEvent( new Event( 'open' ) );
     } );
     
-    const planElement = document.querySelectorAll( '#add-plan-form > div > *' );
+    const configElement = document.querySelectorAll( '#add-shift-form > div > *' );
+    
+    this.addGroup.addEventListener( 'click', async() => {
+      const groupElement = document.querySelectorAll( '#create-group-form > .input-form > div > *' );
+      const strData = (await streamData);
+      const groupInfo = elementsToDict( groupElement );
+      const cookie = strData.getCookies();
+      groupInfo.SID = cookie.SID;
+      console.log( groupInfo );
+      if( strData.createGroup( groupInfo ) )
+        document.querySelector( '#create-group-form' ).parentElement.dispatchEvent( new Event( 'close' ) );
+    } );
     
     this.createPlan.addEventListener( 'click', async() => {
       
+      const planElement = document.querySelectorAll( '#add-plan-form > div > *' );
       const shiftInfo = elementsToDict( planElement );
       const set = ( await setData );
       const cal = ( await calendar );
@@ -63,23 +80,24 @@ export class ButtonRegister
       else [...configElement].forEach( v => { if( v.name && !v.value ) v.style.borderBottom = '2px solid red'; } );
     } );
 
-    const configElement = document.querySelectorAll( '#add-shift-form > div > *' );
-    const shiftIcon = document.querySelector( '#icon-preview' );
 
     this.createShift.addEventListener( 'click', async() => {
       const shiftInfo = elementsToDict( configElement );
+      const set = ( await setData );
       if( inputCheck( shiftInfo ) ){
         const shiftName = shiftInfo['shiftName'];
         delete shiftInfo.shiftName;
-        ( await setData ).shiftType[shiftName] = shiftInfo;
-        ( await setData ).setShiftTypeSelect();
+        set.shiftType[shiftName] = shiftInfo;
+        set.setShiftTypeSelect();
         document.querySelector( '#add-shift-button > .drawer-menu' ).dispatchEvent( new Event( 'close' ) );
       } 
       else [...configElement].forEach( v => { if( v.name && !v.value ) v.style.borderBottom = '2px solid red'; } );
     });
+    
 
     [...configElement].forEach( v => 
     {
+      const shiftIcon = document.querySelector( '#icon-preview' );
       if( !v.name ) return;
       v.addEventListener( 'input', async () => {
         shiftIcon.innerHTML = '';

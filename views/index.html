@@ -11,15 +11,19 @@
       シフト表
     </title>
   </head>
+  <link rel = "shortcut icon" href = "a.png">
+  <script src = "../js/GLib.js"></script>
+  <script src = "../js/createFavicon.js"></script>
   <script src = "../js/setVH.js"></script>
-  <script src = "../js/KeyboardHelper.js"></script>
+  <script src = "../js/keyboardHelper.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../js/jquery.longpress.js"></script>
   <link rel="stylesheet" href="../css/index.css" />
   <link rel="stylesheet" href="../css/shiftType.css" />
   <link rel="stylesheet" href="../css/inputForm.css" />
   <link rel="stylesheet" href="../css/share.css" />
-  <script src = "../js/GLib.js"></script>
+  <script src = "../js/cssVariable.js"></script>
+  <script src = "../js/themeSetting.js"></script>
   <script src="../js/index.js"></script>
   <body>
     
@@ -31,19 +35,10 @@
             <div id = "display-name">名無しさん</div>
           </div>
           <li id = "menu-list">
-            <ul id="create-group-button">
+            <ul id="group-form-button">
               グループを作成する
-              <div class="full-screen-form">
-                <div class="input-form">
-                  <div>
-                    <input name = "groupName" placeholder=" " maxlength = "20">
-                    <label>グループの名前</label>
-                  </div>
-                </div>
-              </div>
             </ul>
-            <ul>aaaa</ul>
-            <ul>aaaa</ul>
+            <ul id = "theme-settings-button">テーマ設定</ul>
             <ul id = "signout">
               <div>
                 ログアウト
@@ -53,6 +48,7 @@
               </div>
             </ul>
           </li>
+          <!-- group-form-buttonと関連付けられたform -->
         </div>
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
           <g>
@@ -61,6 +57,37 @@
             <rect y="400" class="st0" width="512" height="96" rx = "48" ry = "48"></rect>
           </g>
         </svg>
+          <div id = "create-group" class="drawer-menu">
+            <div id="create-group-form" class="drawer-form">    
+              <div class="input-form">
+                <div>
+                  <input name = "groupName" placeholder=" " maxlength = "20">
+                  <label>グループの名前</label>
+                </div>
+                <div>
+                  <div id="add-group-button" class = "button"><div class = "button-text">作成</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id = "theme-settings"  class="drawer-menu">
+            <div class = "drawer-form">
+              <div id = "theme-select">
+                <input type = "radio" name = "theme" id = "light-theme">
+                <label for = "light-theme">
+                  <div id = "sample-light">
+                    <div class = "date">13</div>
+                  </div>
+                </label>
+                <input type = "radio" name = "theme" id = "dark-theme">
+                <label for = "dark-theme">
+                  <div id = "sample-dark">
+                    <div class = "date">13</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
       </div>
       <div id="body-wrapper"></div>
       <div id = "prev-month-button">
@@ -178,218 +205,8 @@
               <div class = "share-name">
                 名無し
               </div>
-              <div class = "share-name">
-                名無し
-              </div>
-              <div class = "share-name">
-                名無し
-              </div>
-              <div class = "share-name">
-                名無し
-              </div>
-              <div class = "share-name">
-                名無し
-              </div>
-              <div class = "share-name">
-                名無し
-              </div>
-              <div class = "share-name">
-                名無し
-              </div>
           </div>
           <div id = "share-list">
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
-            <div class = "share-date-wrapper">
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-              <div class = "share-date"></div>
-            </div>
             <div class = "share-date-wrapper">
               <div class = "share-date"></div>
               <div class = "share-date"></div>

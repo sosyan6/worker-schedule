@@ -1,0 +1,30 @@
+.data
+  / user 
+      /  SID.json
+  / group 
+      /  groups.json
+      /  GID.json
+  / userInfo
+      /  SID.json
+      /  Email.json
+  
+  
+  info.json
+  {
+    users: {
+      mail: { password: "", userName: "" },
+      ・
+      ・
+      ・
+    }
+  }
+  
+  GID = ( 作成者の UID + groupName )のハッシュ
+  
+  group / GID.json
+  {
+    users: [ SID, SID, ... ]
+  }
+  
+// データ消すコマンド
+// find .data/* -type f | xargs rm -f

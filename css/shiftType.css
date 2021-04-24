@@ -7,7 +7,7 @@
   position: relative;
   display: flex;
   width: 100%;
-  height: calc( 100 * var( --vh ) - 50px );
+  max-height: calc( 100 * var( --vh ) - 50px );
   background: #fff;
   z-index: 12;
   flex-direction: column;

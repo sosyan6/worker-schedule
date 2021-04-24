@@ -39,11 +39,10 @@ export class Footer
   async share()
   {
     this.content.classList = [];
-    //this.content.querySelectorAll( '*' ).forEach( e => e.remove() );
     this.content.classList.add( 'share' );
     
-    // document.querySelector( 'div#this-month' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
-    // document.querySelector( 'div#share-list' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
+    document.querySelector( 'div#this-month' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
+    document.querySelector( 'div#share-list' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
     ( await calendar ).setCurrentMonth();
     
   }

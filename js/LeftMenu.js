@@ -15,6 +15,14 @@ export class LeftMenu
     this.menu.addEventListener( 'touchstart', ( e ) => this.onTouch( e ) );
     this.menu.addEventListener( 'touchmove', ( e ) => this.onMove( e ) );
     this.menu.addEventListener( 'touchend', ( e ) => this.onEnd( e ) );
+    
+    
+    this.menu.addEventListener( 'open', ( e ) => {
+      this.open( this.menu );
+    } );
+    this.menu.addEventListener( 'close', ( e ) => {
+      this.close( this.menu );
+    } );
   }
   
   addMenuEvent()

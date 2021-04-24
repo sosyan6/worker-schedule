@@ -1,8 +1,18 @@
+* {
+/*   --bg-color: #FFFFFF;
+  --font-color: #4B4B4B;
+  --inactive-bg-color: #EAEAEA; */
+  
+  --active-bg-color: #4285f4;
+  --active-font-color: #FFFFFF;
+  
+}
+
 body {
   width: 100vw;
   height: calc( 100 * var( --vh ) );
   margin: 0;
-  background: white;
+  background: var( --bg-color );
   display: flex;
   flex-direction: column;
   font-family: arial,sans-serif;
@@ -11,12 +21,13 @@ body {
   overflow: hidden;
   overscroll-behavior: none !important;
   touch-action: manipulation;
+  
 }
 
 .input-form > div > .button {
   position: relative;
-  background: #35F;
-  color: #fff;
+  background: var( --active-bg-color );
+  color: var( --bg-color );
   margin: 0;
   border-radius: 3vw 3vw !important;
   border: 0 !important;
@@ -27,17 +38,25 @@ body {
   height: calc( 80 * var( --vh ) - 50px );
 }
 
+#create-group-form {
+  height: calc( 40 * var( --vh ) - 50px );
+}
+
 .time-input + label {
   top: -40% !important;
 }
 
-.input-form > div > input{
+.input-form > div > input {
   border-radius: 0 !important;
   border-bottom: solid 2px #888;
 }
 
+.input-form input, .input-form select {
+  padding: 1% 1% 0 5% !important;
+}
+
 svg {
-  fill: #4b4b4b;
+  fill: var( --font-color );
 	transition:	fill 0.2s ease;
   pointer-events: none;
 }
@@ -47,9 +66,9 @@ div#header {
 /*   flex: 1; */
 /*   height: calc( 7 * var( --vh ) ); */
   height: 3em;
-  color: #4B4B4B;
+  color: var( --font-color );
   display: flex;
-  background: #FFF;
+  background: var( --bg-color );
 	transition:	all 0.2s ease;
   border-bottom: solid 1px #CCC;
 }
@@ -79,7 +98,7 @@ div#menu {
   position: fixed;
   height: calc( 100 * var( --vh ) );
   width: 70vw;
-  background: #FFF;
+  background: var( --bg-color );
   top: 0;
   left: 0;
 	transition:	transform .4s ease;
@@ -160,20 +179,103 @@ ul#signout > div {
 
 li#menu-list > ul:hover:not(#signout) {
   padding-left: 4em;
-  background: #0004;
+  background: var( --hover-bg-color );
 }
 
-li#menu-list > ul#signout > div:hover {
-  background: #0004;
-
+li#menu-list > ul > div:hover {
+  background: var( --hover-bg-color );
 }
+
+div#theme-settings > div.drawer-form {
+  height: calc( 30 * var( --vh ) );
+}
+
+div#theme-settings > div.drawer-form > div#theme-select {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > input[type=radio] {
+  display: none;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > input[type=radio] + label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position :relative;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > input[type=radio] + label:after {
+  content: '';
+  position: absolute;
+  margin: calc( 15% - 10px ) calc( 50% - 10px );
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  left: 0;
+  border: 1px solid var( --active-bg-color );
+  border-radius: 50%;
+  background: transparent;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > input[type=radio]:checked + label:before {
+  content: '';
+  position: absolute;
+  margin: calc( 15% - 10px - 4px ) calc( 50% - 10px - 4px );
+  width: 16px;
+  height: 16px;
+  bottom: 7px;
+  left: 7px;
+  border-radius: 50%;
+  background: var( --active-bg-color );
+}
+
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div {
+  width: 100%;
+  height: 100%;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light {
+  background: #FFFFFF;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark {
+  background: #4B4B4B;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div > .date {
+  position: relative;
+  margin: 20% 25%;
+  padding: 2px;
+  width: 50%;
+  height: 30%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light > .date {
+  border: 2px solid #EAEAEA;
+  color: #4B4B4B;
+  background: #FFFFFF;
+}
+
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark > .date {
+  border: 2px solid #111111;
+  color: #EEEEEE;
+  background: #4B4B4B;
+}
+
 
 ul#signout.confirm > div {
   transform: translateX(-100%);
 }
 
 div#body-wrapper {
-  background: #4B4B4B;
+  background: #000;
   position: fixed;
   top: 0;
   left: 0;
@@ -198,9 +300,9 @@ div#menu-header {
   position: relative;
 /*   height: calc( 10 * var( --vh ) ); */
   height: 3em;
-  color: #4B4B4B;
+  color: var( --font-color );
   display: flex;
-  background: #FFF;
+  background: var( --bg-color );
   border-bottom: solid 1px #BBB;
 }
 
@@ -239,8 +341,8 @@ div#date-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #4285f4;
-  color: #fff;
+  background: var( --active-bg-color );
+  color: var( --bg-color );
   margin: 2px;
   box-shadow: 1px 2px 5px 1px #0003;
   transition: background .2s ease;
@@ -258,7 +360,7 @@ div#date-wrapper {
   width: 2px;
   height: calc( 100% - ( 1em * 2 ) );
   border-radius: 1px;
-  background: #FFF;
+  background: #FFFFFF;
   z-index: 1;
 }
 
@@ -268,6 +370,10 @@ div#date-wrapper {
 
 #add-plan > #add-plan-message {
   pointer-events: none;
+}
+
+#add-shift-button > .drawer-menu > .drawer-form {
+  height: calc( 100 * var( --vh ) );
 }
 
 #plan-list {
@@ -283,7 +389,7 @@ div#date-wrapper {
 .plans {
   align-items: center;
   background: #77d;
-  color: #FFF;
+  color: var( --bg-color );
   display: flex;
   flex: 0 0 3em;
   justify-content: center;
@@ -298,7 +404,7 @@ div#date-wrapper {
   max-height: 45%;
   right: 0;
   bottom: 0;
-  color: #FFF;
+  color: var( --bg-color );
   font-size: 0.9em;
   position: absolute;
   pointer-events: none;
@@ -321,8 +427,8 @@ div#date-wrapper {
 input#date {
   width: 5.5em;
   height: 100%;
-  background: #0000;
-  color: #4B4B4B;
+  background: transparent;
+  color: var( --font-color );
   border: 0;
   font-size: 1.6em;
   text-align: center;
@@ -404,7 +510,7 @@ div#settings {
   max-height: 40%;
   background: #f55;
   bottom: 0;
-  color: #fff;
+  color: var( --bg-color );
   font-size: 0.9em;
   position: absolute;
   pointer-events: none;
@@ -435,7 +541,7 @@ div.drawer-menu {
   right: 0;
   width: 100vw;
   z-index: 10;
-  background: #fff;
+  background: var( --bg-color );
   transform: translateY( calc( 100% + 50px ) );
   transition: transform .3s cubic-bezier(0.6, 0.6, 0.3, 1);
 }
@@ -445,9 +551,9 @@ div.drawer-menu:after {
   position: absolute;
   width: 100%;
   height: calc( 100% + 1px );
-  background: #fff;
+  background: var( --bg-color );
   bottom: -100%;
-  z-index: 11;
+  z-index: 12;
 }
 
 div.menu-handle {
@@ -457,7 +563,7 @@ div.menu-handle {
   height: 50px;
   border-top: solid 1px #CCC;
   border-radius: 25px 25px 0 0;
-  background: #fff;
+  background: var( --bg-color );
 }
 
 div.menu-handle:before {
@@ -520,7 +626,7 @@ div#content-wrapper {
   display: flex;
   flex-direction: column;
 	transition:	all 0.5s ease;
-  background: #EAEAEA;
+  background: var( --inactive-bg-color );
 }
 
 div#content-wrapper.month > div#calendar-wrapper {
@@ -551,8 +657,8 @@ div#content-wrapper > div#calendar-wrapper > div#day {
   display: flex;
   text-align: center;
   font-weight: bold;
-  color: #4B4B4B;
-  background: #EAEAEA;
+  color: var( --font-color );
+  background: var( --inactive-bg-color );
 }
 
 div#content-wrapper > div#calendar-wrapper > div#day > div {
@@ -664,34 +770,34 @@ div#content-wrapper.share > div#calendar > div > .week {
 
 div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  border: 1px solid #0000;
+  border: 1px solid transparent;
   margin: 1px;
   padding: 2px;
   width: 0;
   flex: 1;
-  color: #4B4B4B;
-  background: #FFF;
+  color: var( --font-color );
+  background: var( --bg-color );
 }
 
 div#content-wrapper.week > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  border: 1px solid #0000;
+  border: 1px solid transparent;
   margin: 1px;
   padding: 2px;
   flex: 1;
-  color: #4B4B4B;
-  background: #FFF;
+  color: var( --font-color );
+  background: var( --bg-color );
   box-sizing: border-box;
   width: calc( 100vw / 7 - 2px * 2 );
 }
 
 div#content-wrapper.list > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  border: 1px solid #0000;
+  border: 1px solid transparent;
   margin: 1px;
   padding: 2px;
-  color: #4B4B4B;
-  background: #FFF;
+  color: var( --font-color );
+  background: var( --bg-color );
   box-sizing: border-box;
   width: auto;
   height: calc( 60 * var( --vh ) / 10 );
@@ -700,11 +806,11 @@ div#content-wrapper.list > div#calendar-wrapper > div#calendar > div > .week > .
 
 div#content-wrapper.share > div#calendar-wrapper > div#calendar > div > .week > .date {
   position: relative;
-  border: 1px solid #0000;
+  border: 1px solid transparent;
   margin: 1px;
   padding: 2px;
-  color: #4B4B4B;
-  background: #FFF;
+  color: var( --font-color );
+  background: var( --bg-color );
   box-sizing: border-box;
   width: auto;
   height: calc( 60 * var( --vh ) / 10 );
@@ -724,7 +830,7 @@ div#content-wrapper:not( .month ) > div#calendar-wrapper > div#day {
   display: none;
 }
 div#content-wrapper.month > div#calendar-wrapper > div#calendar > div > .week > .date.not-this-month {
-  background: #EAEAEA;
+  background: var( --inactive-bg-color );
   opacity: .7;
 }
 
@@ -758,8 +864,8 @@ div#share-wrapper > div#name-wrapper > div.share-name {
   width: 20vw;
   height: 1.5em;
   margin: 1px;
-  border: 1px solid #0000;
-  background: #FFF;
+  border: 1px solid transparent;
+  background: var( --bg-color );
   box-sizing: border-box;
   flex-shrink: 0;
 }
@@ -775,8 +881,8 @@ div#share-list > div.share-date-wrapper > div.share-date {
   height: calc( 60 * var( --vh ) / 10 );
   min-height: 3em;
   margin: 1px 0;
-  border: 1px solid #0000;
-  background: #FFF;
+  border: 1px solid transparent;
+  background: var( --bg-color );
   box-sizing: border-box;
 }
 
@@ -789,25 +895,25 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
   transition: all 0s ease;
 }
 
-.date {
+.week > .date {
   transition: background .2s ease, height .2s ease;
 }
 
-.date:first-of-type, #day > div:first-of-type {
+.week > .date:first-of-type, #day > div:first-of-type {
   color: #f33 !important;
 }
-.date:last-of-type, #day > div:last-of-type {
+.week > .date:last-of-type, #day > div:last-of-type {
   color: #33f !important;
 }
 
 div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.today {
   background: #ff05;
-  border-color: #0000;
+  border-color: transparent;
 }
 
 div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.select-date {
   background: #4285f455;
-  border-color: #0000;
+  border-color: transparent;
 }
 
 div#content-wrapper.month > div#calendar-wrapper > div#share-wrapper,
@@ -826,14 +932,14 @@ div.check-box {
   right: 5%;
   width: 1.2em;
   height: 1.2em;
-  border: 1px #4B4B4B solid;
+  border: 1px var( --font-color ) solid;
   border-radius: 50%;
   box-sizing: border-box;
-  background: #fff;
+  background: var( --bg-color );
   opacity: 0;
   pointer-events: none;
 	transition:	all 0.2s ease;
-  box-shadow: inset 0px 0px 0px 1px #fff;
+  box-shadow: inset 0px 0px 0px 1px var( --bg-color );
 }
 
 .not-this-month .check-box {
@@ -858,8 +964,8 @@ div.isselected > svg {
 
 div#content-wrapper > div#plan {
   position: relative;
-  color: #4B4B4B;
-  background: #FFF;
+  color: var( --font-color );
+  background: var( --bg-color );
   display: flex;
   flex-direction: column;
   border-top: solid 1px #CCC;
@@ -887,7 +993,7 @@ div#footer {
   bottom: 0;
   height: 3em;
   display: flex;
-  background: #FFF;
+  background: var( --bg-color );
   flex-direction: row;
   padding: 5px 0;
   border-top: solid 1px #CCC;
@@ -896,7 +1002,7 @@ div#footer {
 div#footer div{
   position: relative;
   flex: 1;
-  color: #4B4B4B;
+  color: var( --font-color );
   font-size: .9em;
   display: flex;
   justify-content: center;
@@ -928,7 +1034,7 @@ div#footer:after {
   position: absolute;
   width: 25%;
   height: 5px;
-  background: #1a73e8;
+  background: var( --active-bg-color );
   left: 0;
   bottom: 0;
   transition: transform .3s ease;

@@ -45,6 +45,17 @@ export class Calendar
       }
       m.append( monthFragment );
     } );
+    
+    document.querySelectorAll( '.date' ).forEach( date => {
+      date.addEventListener( 'click', () => {
+        if( document.querySelector( 'div#header' ).classList.contains( 'select-mode' ) || date.classList.contains( 'not-this-month' ) ) return;
+        if( date.classList.contains( 'select-date' ) ){
+          document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
+        }else{
+          this.setSelectDate( getDateFromDateElement( date ), date );
+        }
+      } );
+    } );
   }
   
   initCalendar()
@@ -157,15 +168,6 @@ export class Calendar
         data.date.classList.add( 'not-this-month' );
       }
       
-      data.date.addEventListener( 'click', async () => {
-        if( document.querySelector( 'div#header' ).classList.contains( 'select-mode' ) || data.date.classList.contains( 'not-this-month' ) ) return;
-        if( data.date.classList.contains( 'select-date' ) ){
-          document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
-        }else{
-          this.setSelectDate( savedDate, data.date );
-        }
-      } );
-      
       setData.then( s => {
         s.createShiftTypeDate( savedDate, data.date );
       } );
@@ -191,7 +193,6 @@ export class Calendar
   {
     document.querySelectorAll( '.plans' ).forEach( e => e.remove() );
     const dayShift = (await setData).getDayShift( date );
-    console.log( dayShift );
     if( !dayShift || !dayShift.hasOwnProperty( 'schedule' ) ) return;
 
     dayShift.schedule.forEach( ( v ) =>
@@ -230,4 +231,5 @@ export class Calendar
   {
     document.querySelector( 'input#date' ).value = this.currentDate.format( 'YYYY-MM' );
   }
+  
 }
