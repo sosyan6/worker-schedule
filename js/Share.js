@@ -5,9 +5,15 @@ export class Share
     this.registListener();
   }
   
-  getShareData()
+  async getShareData()
   {
-    
+    const aaaaa = await (await streamData).ownData;
+  }
+  
+  async getGroupData()
+  {
+    const groupData = ( await streamData ).getData();
+    return 
   }
   
   registListener()

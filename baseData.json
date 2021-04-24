@@ -1,5 +1,8 @@
 {
-  "loginInfo" : { "name" : "", "password" : "" },
+  "loginInfo": { "password": "", "username": "" },
+  "data": {
     "shiftType" : { },
-    "shift" : { }
+    "shift" : { },
+    "group": [ ]
+  }
 }

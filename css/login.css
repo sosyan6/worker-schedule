@@ -2,7 +2,7 @@ body {
   width: 100vw;
   height: calc( 100 * var( --vh ) );
   margin: 0;
-  background: #beace8;
+  background: #FFF;
   display: flex;
   flex-direction: column;
   font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
@@ -51,10 +51,18 @@ div#login:after {
   left: 10%;
 }
 
+#sign-in > .input-form {
+  top: -10%;
+}
+
 #sign-up {
   position: absolute;
   top: 30%;
   left: 10%;
+}
+
+.button {
+  width: 80%;
 }
 
 .login{

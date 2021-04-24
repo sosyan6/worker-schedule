@@ -18,6 +18,7 @@ const share = import( './Share.js' ).then( m => new m.Share() );
 // };
 
 
+
 function getSelectDayNum()
 {
   return document.querySelector( '.select-date' ).innerText.match( /\d*/ )[0];

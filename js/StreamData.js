@@ -8,7 +8,6 @@ export class StreamData
   
   onDownloadSuccessed( json )
   {
-    console.log( json );
     this.getCookies();
     document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
     document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
@@ -20,8 +19,8 @@ export class StreamData
   onDownloadFailed()
   {
     console.log( 'failed' );
-    document.cookie = "SID=;";
-    location.reload();
+    // document.cookie = "SID=;";
+    // location.reload();
   }
   
   getCookies()
@@ -37,12 +36,28 @@ export class StreamData
     return this.cookies;
   }
   
-  loadData()
+  createGroup( data )
+  {
+    $.ajax(
+      {
+        url: `/createGroup`,
+        type: 'post',
+        data: JSON.stringify( data ),
+        datatype: 'json',
+        contentType: "application/json; charset=utf-8"
+      }
+    ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); } ) );
+  }
+  
+  loadData( SID, name )
   {
     return new Promise( ( resolve, reject ) =>
     {
       $.post( '/getdata', this.cookies )
-      .done( res => resolve( JSON.parse( res ) ) )
+      .done( res => {
+        console.log(JSON.parse( res ));
+        resolve( JSON.parse( res ) );
+      } )
       .fail( () => reject() );
     } 
     );
@@ -62,3 +77,4 @@ export class StreamData
     } );
   }
 }
+

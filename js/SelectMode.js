@@ -5,7 +5,7 @@ export class SelectMode
     calendar.then( () => {
       this.classList = document.querySelector( 'div#header' ).classList;
       this.isSelectMode = false; // 選択モード
-      this.onMove = this.onMove.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
+      this.onMove  = this.onMove .bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
       this.onMouse = this.onMouse.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
       this.onClick = this.onClick.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
       this.onTouch = this.onTouch.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
@@ -212,7 +212,7 @@ export class SelectMode
   
   shortcut( e )
   {
-    console.log( e );
+    // console.log( e );
     if( e.code === 'Escape' ) this.cancel();
     if( document.querySelector( 'div#content-wrapper.month' ) && e.code === 'KeyA' && e.ctrlKey ){
       if( !this.isSelectMode ){
