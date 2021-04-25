@@ -17,8 +17,6 @@ const share = import( './Share.js' ).then( m => new m.Share() );
 //   }, { passive: false } );
 // };
 
-
-
 function getSelectDayNum()
 {
   return document.querySelector( '.select-date' ).innerText.match( /\d*/ )[0];
@@ -41,4 +39,30 @@ function createDate( date, day )
   const newDate = new Date( date );
   newDate.setDate( day );
   return newDate;
+}
+
+function getDateFromDateElement( element )
+{
+  if( !element.classList.contains( 'date' ) ) return;
+  const date = new Date( document.querySelector( 'input#date' ).value );
+  switch( element.parentNode.parentNode.id ){
+    case 'prev-month':
+      date.setMonth( date.getMonth() - 1 );
+    return;
+    case 'next-month':
+      date.setMonth( date.getMonth() + 1 );
+    return;
+  }
+  
+  if( element.classList.contains( 'not-this-month' ) ){
+    if( [...element.parentNode.parentNode.querySelectorAll( '.date' )].indexOf( element ) < 7 * 6 / 2 ){
+      date.setMonth( date.getMonth() - 1 );
+    }else{
+      date.setMonth( date.getMonth() + 1 );
+    }
+  }
+  
+  date.setDate( element.textContent.match( /^\d+/ ) );
+  
+  return date;
 }

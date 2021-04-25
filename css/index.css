@@ -27,7 +27,7 @@ body {
 .input-form > div > .button {
   position: relative;
   background: var( --active-bg-color );
-  color: var( --bg-color );
+  color: var( --active-font-color );
   margin: 0;
   border-radius: 3vw 3vw !important;
   border: 0 !important;
@@ -78,7 +78,7 @@ div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ) {
 }
 
 div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
-  background: #EEE;
+    background: var( --inactive-bg-color );
 }
 
 div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
@@ -247,7 +247,7 @@ div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dar
   background: #4B4B4B;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div > .sample-date {
   position: relative;
   margin: 20% 25%;
   padding: 2px;
@@ -257,13 +257,13 @@ div#theme-settings > div.drawer-form > div#theme-select > label > div > .date {
   box-sizing: border-box;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light > .sample-date {
   border: 2px solid #EAEAEA;
   color: #4B4B4B;
   background: #FFFFFF;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark > .sample-date {
   border: 2px solid #111111;
   color: #EEEEEE;
   background: #4B4B4B;
@@ -388,8 +388,8 @@ div#date-wrapper {
 
 .plans {
   align-items: center;
-  background: #77d;
-  color: var( --bg-color );
+  background: var( --active-bg-color );
+  color: var( --active-font-color );
   display: flex;
   flex: 0 0 3em;
   justify-content: center;
@@ -418,10 +418,11 @@ div#date-wrapper {
   bottom: -1px;
   width: 0;
   height: 0;
+  color: var( --active-font-color );
   line-height: 100%;
   border-style: solid;
   border-width: 1em;
-  border-color: transparent #88F #88F transparent ;
+  border-color: transparent var( --active-bg-color ) var( --active-bg-color ) transparent ;
 }
 
 input#date {
@@ -535,78 +536,7 @@ div#settings {
   display: flex;
 }
 
-div.drawer-menu {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 100vw;
-  z-index: 10;
-  background: var( --bg-color );
-  transform: translateY( calc( 100% + 50px ) );
-  transition: transform .3s cubic-bezier(0.6, 0.6, 0.3, 1);
-}
 
-div.drawer-menu:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: calc( 100% + 1px );
-  background: var( --bg-color );
-  bottom: -100%;
-  z-index: 12;
-}
-
-div.menu-handle {
-  position: absolute;
-  top: -50px;
-  width: 100%;
-  height: 50px;
-  border-top: solid 1px #CCC;
-  border-radius: 25px 25px 0 0;
-  background: var( --bg-color );
-}
-
-div.menu-handle:before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 45%;
-  width: 10%;
-  height: 5px;
-  border-radius: 2px;
-  background: #888;
-  z-index: 1;
-}
-
-div.menu-handle > div.close-button {
-  position: absolute;
-  top: calc( 50% - ( 25px / 2 ) );
-  right: 20px;
-  width: 25px;
-  height: 25px;
-  border: 3px solid #888;
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-
-div.menu-handle > div.close-button:before, div.menu-handle > div.close-button:after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: calc( 50% - ( 3px / 2 ) );
-  width: 3px;
-  height: calc( 100% - ( 2px * 2 ) );
-  border-radius: 1px;
-  background: #888;
-  z-index: 1;
-}
-
-div.menu-handle > div.close-button:after {
-  transform: rotate( 45deg );
-}
-div.menu-handle > div.close-button:before {
-  transform: rotate( -45deg );
-}
 div#settings > svg{
   transition: transform .4s ease;
 }
@@ -879,6 +809,7 @@ div#share-list > div.share-date-wrapper {
 
 div#share-list > div.share-date-wrapper > div.share-date {
   height: calc( 60 * var( --vh ) / 10 );
+  position: relative;
   min-height: 3em;
   margin: 1px 0;
   border: 1px solid transparent;
@@ -900,10 +831,10 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
 }
 
 .week > .date:first-of-type, #day > div:first-of-type {
-  color: #f33 !important;
+  color: #f55 !important;
 }
 .week > .date:last-of-type, #day > div:last-of-type {
-  color: #33f !important;
+  color: #55f !important;
 }
 
 div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.today {
@@ -1076,11 +1007,11 @@ div#share {
   }
   
   div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {
-    background: #EEE;
+    background: var( --inactive-bg-color );
   }
   
   div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
-    background: #DDD;
+    background: var( --inactive-bg-color );
   }
   
   div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {

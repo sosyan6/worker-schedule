@@ -49,13 +49,23 @@ export class StreamData
     ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); } ) );
   }
   
-  loadData( SID, name )
+  getData( url )
+  {
+    return new Promise( ( resolve ) => {
+      $.post( url, {} )
+      .done( res => {
+        resolve( res );
+      } );
+    } );
+  }
+  
+  loadData()
   {
     return new Promise( ( resolve, reject ) =>
     {
-      $.post( '/getdata', this.cookies )
+      $.post( '/getdata?getname=true', this.cookies )
       .done( res => {
-        console.log(JSON.parse( res ));
+        console.log( JSON.parse( res ) );
         resolve( JSON.parse( res ) );
       } )
       .fail( () => reject() );

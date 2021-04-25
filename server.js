@@ -22,7 +22,7 @@ app.post( '/signup', ( req, res ) => {
   if( !fs.existsSync(`.data/user/${hashHex}.json`) ){
     //  ファイルがないなら作成して成功を返す
     const newJson = baseJSON;
-    newJson.loginInfo = req.body;
+    newJson.userName = req.body.name;
     fs.writeFile( `.data/user/${hashHex}.json`, JSON.stringify( newJson ), err => {
       if( err ) {
         res.send('error'); return;
@@ -36,7 +36,7 @@ app.post( '/signup', ( req, res ) => {
           console.log( err ); return;
         }
       } );
-      fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( `{ email: ${req.body.email}, name: ${req.body.name}, password: ${req.body.name} }` ), err => {
+      fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( `{ email: ${req.body.email}, name: ${req.body.name}, password: ${req.body.password} }` ), err => {
         if( err ) {
           console.log( err ); return;
         }
@@ -82,7 +82,7 @@ app.post( '/createGroup', ( req, res ) => {
   const hash = genHash256( req.body.SID, req.body.groupName );
   if( !fs.existsSync( `.data/group/${hash}.json` ) )
   {
-    fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( { groupInfo: { groupName: req.body.groupName }, users: [req.body.SID] } ), ( err ) => {
+    fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( `{ groupInfo: { groupName: ${req.body.groupName} }, users: [${req.body.SID}] }` ), ( err ) => {
       if( err ){
         console.log( err );
         res.send( 'error' );
@@ -97,48 +97,45 @@ app.post( '/createGroup', ( req, res ) => {
     
 } );
 
-app.post( /^\/join(\?.*)?$/, ( req, res ) => {
-  if( !Object.keys(req.query).length ){
+app.get( '/join/:GID', ( req, res ) => {
+  console.log( 'aaaaaaaaaadawdada' );
+  if( !req.params.GID ){
     res.send( '不正なURLです' );
-    return;
-  }
-  if( !req.query.GID ){
-    res.send( '不正なクエリです' );
     return;
   }
   if( !req.cookies.SID ){
     res.send( 'ログインしてから再試行してください' );
     return;
   }
-  if( req.query && req.query.GID && req.cookies.SID )
+  if( fs.existsSync( `.data/user/${req.cookies.SID}.json` ) &&
+      fs.existsSync( `.data/group/${req.params.GID}.json` ) )
   {
-    if( fs.existsSync( `.data/user/${req.cookies.SID}.json` ) &&
-        fs.existsSync( `.data/group/${req.query.GID}.json` ) )
+    fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) =>
     {
-      fs.readFile( `.data/group/${req.query.GID}.json`, 'utf-8', ( err, data ) => {
-        if( err ){
-            console.log( err );
-            res.send( 'error' );
-            return;
-          }
-       const newJson = JSON.parse( data );
-       newJson.users.push( req.cookies.SID );
-        fs.writeFile( `.data/group/${req.query.GID}.json`, JSON.stringify( newJson ), ( err ) => {
-          if( err ){
-            console.log( err );
-            res.send( 'error' );
-            return;
-          }
-          console.log( 'グループに参加しました' );
-          res.send( 'join group!' );
-        } );
+      const newJson = JSON.parse( data );
+      console.log( newJson.users );
+      if( !newJson.users.includes( req.cookies.SID ) ) newJson.users.push( req.cookies.SID );
+      fs.writeFile( `.data/group/${req.params.GID}.json`, JSON.stringify( newJson ), err => {
+        if( err ) res.send( 'error' );
       } );
-      res.send( 'success!' );
-      return;
-    }else{
-      res.send( 'グループが見つかりませんでした' );
-      return;
-    }
+    } );
+    
+    fs.readFile( `.data/user/${req.cookies.SID}.json`, 'utf-8', ( err, data ) => {
+      const newJson = JSON.parse( data );
+      newJson.data.group.push( req.params.GID );
+      console.log( newJson );
+      fs.writeFile( `.data/user/${req.cookies.SID}.json`, JSON.stringify( newJson ), err => {
+        if( err ) res.send( 'error' );
+      } );
+    } );
+    
+    console.log( 'グループに参加しました' );
+    res.send( 'join group!' );
+    return;
+    
+  }else{
+    res.send( 'グループが見つかりませんでした' );
+    return;
   }
 } );
 
@@ -152,24 +149,34 @@ app.post( /^\/getdata(\?.*)?$/, ( req, res ) => {
       res.status( 404 ).send( 'ファイルが見つかりませんでした' ); 
       return;
     }
+    if( !req.query.getname ){
+      res.json( data );
+      return;
+    } 
+    const newJson = JSON.parse( data );
+    res.cookie( 'name', newJson.userName, { maxAge: 1000 * 3600 * 24 * 365 } );
     res.json( data );
-    if( !req.query.getname ) return;
-    fs.readFile( `.data/userInfo/${req.body.SID}.json`, 'utf-8', ( err, sData ) => {
-      if( err ) 
+  } );  
+  return;
+} );
+
+app.post( '/getGroupData/:GID', ( req, res ) => {
+  if( fs.existsSync( `.data/group/${req.params.GID}.json` ) )
+  {
+    fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
+      if( err )
       {
-        res.status( 404 ).send( 'ファイルが見つかりませんでした' ); 
+        console.log( err );
+        res.status( 404 ).send( 'error' );
         return;
       }
-      const newJson = JSON.parse( sData );
-      res.cookie( 'name', newJson.name, { maxAge: 1000 * 3600 * 24 * 365 } );
-      console.log( "atta" );
+      const getGroupData = ( ID ) => new Promise( resolve => fs.readFile( `.data/user/${ID}.json`, 'utf-8', ( err, userData ) => resolve( userData ) ) );
+      Promise.all( JSON.parse( data ).users.map( async v => await getGroupData( v ) ) ).then( j => res.json( j ) );
     } );
-  } );  
-    return;
+  }
 } );
 
 app.get( /\/.*/, ( req, res ) => {
-  console.log( req.url );
   if( req.url === '/' && req.cookies.SID ) res.sendFile( `${ __dirname }/views/index.html` );
   else if( req.url === '/' ) res.sendFile( `${ __dirname }/views/login.html` );
   else res.sendFile( `${ __dirname }/${ req.url }` );

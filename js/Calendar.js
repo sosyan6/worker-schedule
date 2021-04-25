@@ -52,6 +52,7 @@ export class Calendar
         if( date.classList.contains( 'select-date' ) ){
           document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
         }else{
+          console.log( 1 ); 
           this.setSelectDate( getDateFromDateElement( date ), date );
         }
       } );
@@ -101,17 +102,18 @@ export class Calendar
     const shareList = document.querySelector( 'div#share-list' );
     
     document.querySelector( 'div#prev-month-button' ).addEventListener( 'click', function(){
-      document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#FFF' );
-      document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#FFF' );
-      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#FFF' );
+      document.querySelectorAll( '.date' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
+      // document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
+      // document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
       document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
       // document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.display = 'block' );
       calendar.scrollBy( { top: 0, left: -thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
     document.querySelector( 'div#next-month-button' ).addEventListener( 'click', function(){
-      document.querySelectorAll( '.today' ).forEach( e => e.style.background = '#FFF' );
-      document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = '#FFF' );
-      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = '#FFF' );
+      document.querySelectorAll( '.date' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
+      // document.querySelectorAll( '.today' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
+      // document.querySelectorAll( '.select-date' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
+      // document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.background = 'var( --inactive-bg-color )' );
       document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
       // document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.display = 'block' );
       calendar.scrollBy( { top: 0, left: thisMonth.offsetWidth, behavior: 'smooth'  } );
@@ -153,7 +155,10 @@ export class Calendar
        // addEventListener内だとcreatingDateの値がおかしくなるので、ここでその時のループの値を保存しておく。
       const savedDate = new Date( creatingDate );
       
+      console.log( data.date )
       if( this.baseDate.format( 'YYYY/MM/DD' ) === creatingDate.format( 'YYYY/MM/DD' ) ){
+        // console.log( this.baseDate )
+        console.log( creatingDate )
         document.querySelectorAll( '.select-date' ).forEach( ( e ) => e.classList.remove( 'select-date' ) );
         data.date.classList.add( 'today' );
         data.date.classList.add( 'select-date' );
@@ -184,7 +189,7 @@ export class Calendar
     /*
     *    ここで押された日のスケジュールを設定する
     */
-    if( date.format('YYYY/MM') !== this.currentDate.format('YYYY/MM') ) return;
+    // if( date.format( 'YYYY/MM' ) !== this.currentDate.format( 'YYYY/MM' ) ) return;
     await this.setPlan( date );
     this.setCurrentDate( date );
   }
@@ -192,7 +197,7 @@ export class Calendar
   async setPlan( date )
   {
     document.querySelectorAll( '.plans' ).forEach( e => e.remove() );
-    const dayShift = (await setData).getDayShift( date );
+    const dayShift = ( await setData ).getDayShift( date );
     if( !dayShift || !dayShift.hasOwnProperty( 'schedule' ) ) return;
 
     dayShift.schedule.forEach( ( v ) =>
@@ -209,12 +214,13 @@ export class Calendar
   setCurrentMonth( option = {} )
   {
     document.querySelectorAll( '.have-plan' ).forEach( e => e.remove() );
-    console.log( this.currentDate );
+    // console.log( this.currentDate );
     if( option.direction ){
       this.currentDate.setMonth( this.currentDate.getMonth() + option.direction );
     }else{
       this.currentDate.setYear( option.year || this.baseDate.getFullYear() );
       this.currentDate.setMonth( option.month  || this.baseDate.getMonth() );
+      // console.log( this.baseDate );
     }
     this.setCurrentDate( this.currentDate );
     this.initDisplayDate();
