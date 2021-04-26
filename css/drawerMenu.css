@@ -25,10 +25,15 @@ div.drawer-menu:after {
   width: 100%;
   max-height: calc( 100 * var( --vh ) - 50px );
   background: var( --bg-color );
+/*   padding-top: 50px; */
   z-index: 12;
   flex-direction: column;
   align-items: center;
   overflow: scroll;
+}
+
+.drawer-form > div {
+  display: contents;
 }
 
 div.menu-handle {

@@ -8,7 +8,7 @@ export class SetData {
       // document.querySelector( '.select-date' ).dispatchEvent( new Event( 'click' ) );  //  今日のplanを表示する
       
       ( await calendar ).setSelectDate( new Date(), document.querySelector( '.today' ) );
-      document.querySelector( '#icon-preview' ).appendChild( this.createIconElement( elementsToDict( document.querySelectorAll( '#shift-type-config > .input-form > div > *' ) ) ) );
+      document.querySelector( '.icon-preview' ).appendChild( this.createIconElement( elementsToDict( document.querySelectorAll( '#shift-type-config > .input-form > div > *' ) ) ) );
     } );
   }
   
@@ -27,7 +27,7 @@ export class SetData {
     
     const get = date =>
     {
-      if( date && this.shift.hasOwnProperty( date.format( 'YYYY/MM' ) ) && this.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
+      if( date && this.shift?.hasOwnProperty( date.format( 'YYYY/MM' ) ) && this.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
         return this.shift[date.format( 'YYYY/MM' )][date.format('DD')];
       else
         return null;
@@ -209,7 +209,32 @@ export class SetData {
     
     for( let i = len( this.shiftType ) - 1; i >= 0 ; i-- ){
       const icon = this.createIconElement( this.shiftType[shiftKeys[i]], shiftKeys[i] );
-      shiftTypeSelect.insertAdjacentElement( 'afterbegin', icon.cloneNode( true ) );
+      
+      $( icon ).longpress( () => {
+        
+        const drawer = document.querySelector( '#add-shift-button > .drawer-menu' );
+        const addShift = document.querySelector( '#add-shift-form' );
+        const data = this.shiftType[shiftKeys[i]];
+        const name = shiftKeys[i];
+        
+        console.log( data );
+        
+        addShift.querySelectorAll( 'div > *' ).forEach( e => {
+          if( e.name ){
+            if( e.name === 'shiftName' ){
+              e.value = name;
+              e.setAttribute( 'readonly', true );
+              e.style.background = '#dddddd';
+            }
+            else e.value = data[e.name];
+          }
+        } );
+        addShift.querySelector( '.submit-button' ).style.display = 'none';
+        addShift.querySelector( '.edit-button' ).style.display = 'flex';
+        
+        drawer.dispatchEvent( new Event( 'open' ) );
+      }, () => {}, 300 );
+      shiftTypeSelect.insertAdjacentElement( 'afterbegin', icon );
     } 
     this.settingDateShiftType();
   }
@@ -238,7 +263,7 @@ export class SetData {
         dateShiftType.innerText = shiftInfo.initial;
         dateShiftType.style.background =  shiftInfo.color;
 
-        if( shiftInfo.color.toRGB().reduce( ( s, v ) => s + v ) > 256 * 3 / 2 )
+        if( shiftInfo.color.isBright() )
           dateShiftType.style.color = '#000';
         else
           dateShiftType.style.color = '#FFF';
@@ -270,6 +295,11 @@ export class SetData {
     const initialText = document.createElement( 'div' );
     initialText.textContent = sData.initial;
     initialText.classList.add( 'shift-type-initial' );
+    
+    if( sData.color?.isBright() )
+      initialText.style.color = '#000';
+    else
+      initialText.style.color = '#FFF';
     s.appendChild( initialText );
     return s;
   }

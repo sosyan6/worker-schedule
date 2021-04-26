@@ -41,6 +41,7 @@ export class Footer
     this.content.classList = [];
     this.content.classList.add( 'share' );
     
+    document.querySelector( 'div#calendar' ).scrollTo( { top: 0, left: document.querySelector( 'div#calendar' ).offsetWidth } );
     document.querySelector( 'div#this-month' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
     document.querySelector( 'div#share-list' ).scrollTo( { top: document.querySelector( 'div#this-month .today' )?.offsetTop || 0, left: 0, behavior: 'smooth'  } );
     ( await calendar ).setCurrentMonth();

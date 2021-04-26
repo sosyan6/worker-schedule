@@ -51,10 +51,6 @@ body {
   border-bottom: solid 2px #888;
 }
 
-.input-form input, .input-form select {
-  padding: 1% 1% 0 5% !important;
-}
-
 svg {
   fill: var( --font-color );
 	transition:	fill 0.2s ease;
@@ -395,6 +391,10 @@ div#date-wrapper {
   justify-content: center;
   margin: 2px;
   text-align: center;
+  transition: background .2s ease;
+}
+.plans:hover {
+  background: var( --clicked-active-bg-color );
 }
 
 .have-plan {
@@ -509,9 +509,9 @@ div#settings {
 .date-shift-type {
   height: 1.5em;
   max-height: 40%;
-  background: #f55;
+  background: var( --active-bg-color );
   bottom: 0;
-  color: var( --bg-color );
+  color: var( --active-font-color );
   font-size: 0.9em;
   position: absolute;
   pointer-events: none;
@@ -520,17 +520,17 @@ div#settings {
   width: 100%;
 }
 
-#icon-preview {
+.icon-preview {
   flex: 0 1 20%;
 }
 
-#icon-preview > svg {
+.icon-preview > svg {
   transform: none;
   width: 80%;
   height: auto;
 }
 
-#icon-preview > .shift-type {
+.icon-preview > .shift-type {
   height: 100%;
   width: auto;
   display: flex;
@@ -629,7 +629,8 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
   flex-shrink: 0;
   overflow: hidden;
   scroll-snap-type: x mandatory;
-  margin-top: calc( 1.5em + 2px );
+  margin-top: calc( 1.5em + 4px );
+  margin-right: 2px;
 }
 
 div#content-wrapper.month > div#calendar-wrapper > div#calendar > div {
@@ -780,6 +781,7 @@ div#share-wrapper > div#name-wrapper {
   display: flex;
   width: 100%;
   overflow: hidden;
+  margin-bottom: 2px;
 }
 
 div#share-list {
@@ -794,6 +796,7 @@ div#share-wrapper > div#name-wrapper > div.share-name {
   width: 20vw;
   height: 1.5em;
   margin: 1px;
+  color: var( --font-color );
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
@@ -1038,7 +1041,7 @@ div#share {
   }
   
   div.drawer-menu {
-    width: calc( 100vw / 3 );
+    max-width: calc( 100vw / 3 );
   }
   div.drawer-menu > div.drawer-form {
     max-height: calc( 100 * var( --vh ) - 50px - 3em );

@@ -38,15 +38,17 @@ export class StreamData
   
   createGroup( data )
   {
-    $.ajax(
-      {
-        url: `/createGroup`,
-        type: 'post',
-        data: JSON.stringify( data ),
-        datatype: 'json',
-        contentType: "application/json; charset=utf-8"
-      }
-    ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); } ) );
+    return new Promise( resolve => {
+      $.ajax(
+        {
+          url: `/createGroup`,
+          type: 'post',
+          data: JSON.stringify( data ),
+          datatype: 'json',
+          contentType: "application/json; charset=utf-8"
+        }
+      ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); resolve( res ); } ) );
+    } )
   }
   
   getData( url )

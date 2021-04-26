@@ -82,7 +82,7 @@ app.post( '/createGroup', ( req, res ) => {
   const hash = genHash256( req.body.SID, req.body.groupName );
   if( !fs.existsSync( `.data/group/${hash}.json` ) )
   {
-    fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( `{ groupInfo: { groupName: ${req.body.groupName} }, users: [${req.body.SID}] }` ), ( err ) => {
+    fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( { groupInfo: { groupName: req.body.groupName }, users: [req.body.SID] } ), ( err ) => {
       if( err ){
         console.log( err );
         res.send( 'error' );
@@ -122,7 +122,7 @@ app.get( '/join/:GID', ( req, res ) => {
     
     fs.readFile( `.data/user/${req.cookies.SID}.json`, 'utf-8', ( err, data ) => {
       const newJson = JSON.parse( data );
-      newJson.data.group.push( req.params.GID );
+      if( !newJson.data.group.includes( req.params.GID ) )newJson.data.group.push( req.params.GID );
       console.log( newJson );
       fs.writeFile( `.data/user/${req.cookies.SID}.json`, JSON.stringify( newJson ), err => {
         if( err ) res.send( 'error' );
@@ -130,7 +130,9 @@ app.get( '/join/:GID', ( req, res ) => {
     } );
     
     console.log( 'グループに参加しました' );
-    res.send( 'join group!' );
+    // res.sendFile( `${ __dirname }/views/index.html` );
+    res.writeHead( 301, { Location: '/' } );
+    res.end();
     return;
     
   }else{
@@ -140,8 +142,6 @@ app.get( '/join/:GID', ( req, res ) => {
 } );
 
 app.post( /^\/getdata(\?.*)?$/, ( req, res ) => {
-  
-  console.log( req.body.SID );
   
   fs.readFile( `.data/user/${req.body.SID}.json`, 'utf-8', ( err, data ) => {
     if( err ) 
@@ -170,7 +170,8 @@ app.post( '/getGroupData/:GID', ( req, res ) => {
         res.status( 404 ).send( 'error' );
         return;
       }
-      const getGroupData = ( ID ) => new Promise( resolve => fs.readFile( `.data/user/${ID}.json`, 'utf-8', ( err, userData ) => resolve( userData ) ) );
+      console.log( data );
+      const getGroupData = ( ID ) => new Promise( resolve => fs.readFile( `.data/user/${ID}.json`, 'utf-8', ( err, userData ) => { const json = JSON.parse( userData ); delete json.data.group; resolve( json ) } ) );
       Promise.all( JSON.parse( data ).users.map( async v => await getGroupData( v ) ) ).then( j => res.json( j ) );
     } );
   }

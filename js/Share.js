@@ -9,15 +9,26 @@ export class Share
     this.setGroup();
     this.getGroupDatas().then( data => { 
       const d = data.map( v => v.map( l => l ) );
-      if( d.length ) this.generateShare( d[0] );
+      if( d.length ){
+        this.generateShare( d[0] );
+        this.setScroll( d[0] );
+      }
+    } );
+  }
+  
+  setScroll( data )
+  {
+    document.querySelector( '#calendar' ).addEventListener( 'onScroll', () => {
+      this.generateShare( data );
     } );
   }
   
   generateShare( data )
   {
+    this.shareList.querySelectorAll( '*' ).forEach( e => e.remove() );
+    this.nameWrapper.querySelectorAll( '*' ).forEach( e => e.remove() );
     data.forEach( async user => {
       const myData = await (await streamData).ownData;
-      user = JSON.parse( user );
       
       if( user.userName === myData.userName ) return;
       

@@ -71,6 +71,21 @@
               </div>
             </div>
           </div>
+          <div class="drawer-menu">
+            <div id="display-URL" class="drawer-form">
+              <div class="input-form">
+                <div>
+                  <div class="display-message">
+                    クリップボードに共有リンクをコピーしました
+                  </div>
+                </div>
+                <div>
+                  <input type="text" name="URL" onfocus="this.select();">
+                  <lavel>URL</lavel>
+                </div>
+              </div>
+            </div>
+          </div>
           <div id = "theme-settings"  class="drawer-menu">
             <div class = "drawer-form">
               <div id = "theme-select">
@@ -151,9 +166,14 @@
                         </select>
                       </div>
 
-                      <div class="ok-button">
-                        <div id="icon-preview"></div>
+                      <div class="submit-button">
+                        <div class="icon-preview"></div>
                         <div class="button"><div class="button-text">作成</div></div>
+                      </div>
+                      <div class="edit-button">
+                        <div class="icon-preview"></div>
+                        <div class="button delete"><div class="button-text">削除</div></div>
+                        <div class="button edit"><div class="button-text">編集</div></div>
                       </div>
                     </div>
                   </div>
@@ -225,14 +245,18 @@
                   </div>
                   <div>
                     <input type="time" class="time-input" name="startTime" placeholder=" ">
-                    <label>開始時間</label>
+                    <label class="time-message">開始時間</label>
                   </div>
                   <div>
                     <input type="time" class="time-input" name="endTime" placeholder=" ">
-                    <label>終了時間</label>
+                    <label class="time-message">終了時間</label>
                   </div>
-                  <div>
+                  <div class = "submit-button">
                     <div id="add-plan-button" class = "button"><div class = "button-text">作成</div></div>
+                  </div>
+                  <div class="edit-button">
+                    <div class="button delete"><div class="button-text">削除</div></div>
+                    <div class="button edit"><div class="button-text">編集</div></div>
                   </div>
                 </div>
               </div>
