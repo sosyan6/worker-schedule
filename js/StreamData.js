@@ -9,10 +9,10 @@ export class StreamData
   onDownloadSuccessed( json )
   {
     this.getCookies();
-    document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
+    document.querySelector( '#add-shift-drawer' ).addEventListener( 'onclose', () => this.saveData() );
     document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
     document.querySelector( '#next-month-button' ).addEventListener( 'save', () => this.saveData() );
-    document.querySelector( '#display-name' ).textContent = decodeURI(this.cookies.name) + ' さん';
+    document.querySelector( '#display-name' ).textContent = decodeURI( this.cookies.name ) + ' さん';
     return json;
   }
   
@@ -38,24 +38,36 @@ export class StreamData
   
   createGroup( data )
   {
-    $.ajax(
-      {
-        url: `/createGroup`,
-        type: 'post',
-        data: JSON.stringify( data ),
-        datatype: 'json',
-        contentType: "application/json; charset=utf-8"
-      }
-    ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); } ) );
+    return new Promise( resolve => {
+      $.ajax(
+        {
+          url: `/createGroup`,
+          type: 'post',
+          data: JSON.stringify( data ),
+          datatype: 'json',
+          contentType: "application/json; charset=utf-8"
+        }
+      ).done( res => this.ownData.then( ( d ) => { d.data.group.push( res ); this.saveData(); resolve( res ); } ) );
+    } )
   }
   
-  loadData( SID, name )
+  getData( url )
+  {
+    return new Promise( ( resolve ) => {
+      $.post( url, {} )
+      .done( res => {
+        resolve( res );
+      } );
+    } );
+  }
+  
+  loadData()
   {
     return new Promise( ( resolve, reject ) =>
     {
-      $.post( '/getdata', this.cookies )
+      $.post( '/getdata?getname=true', this.cookies )
       .done( res => {
-        console.log(JSON.parse( res ));
+        console.log( JSON.parse( res ) );
         resolve( JSON.parse( res ) );
       } )
       .fail( () => reject() );

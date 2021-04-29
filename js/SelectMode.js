@@ -10,10 +10,9 @@ export class SelectMode
       this.onClick = this.onClick.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
       this.onTouch = this.onTouch.bind( this ); // ゴミjsのthis参照を解決するためにthisをbindした関数を作る
       // コメント飽きた
-      this.thisMonthDates = document.querySelectorAll( 'div#this-month div.date:not( .not-this-month )' );
-      this.thisMonthDates.forEach( date => {
+      document.querySelectorAll( 'div#this-month div.date' ).forEach( date => {
         $( date ).longpress( () => {  // ここでコメントが途絶えている・・・
-          if( this.isSelectMode || !document.querySelector( 'div#content-wrapper.month' ) ) return;
+          if( this.isSelectMode || !document.querySelector( 'div#content-wrapper.month' ) || date.classList.contains( 'not-this-month' ) ) return;
           this.lastNode = date;
           this.maxNode = date;
           this.select( date );
@@ -70,7 +69,7 @@ export class SelectMode
 
     document.querySelector( 'div#settings' ).addEventListener( 'click', this.onClick );
     document.querySelector( 'div#settings' ).classList.add( 'cancel' );
-    document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
+    document.querySelector( 'div#shift-type' ).dispatchEvent( new Event( 'open' ) );
 
     document.addEventListener( 'touchmove', this.onMove );
   }
@@ -105,7 +104,7 @@ export class SelectMode
 
     document.querySelector( 'div#settings' ).removeEventListener( 'click', this.onClick );
     document.querySelector( 'div#settings' ).classList.remove( 'cancel' );
-    document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'close' ) );
+    document.querySelector( 'div#shift-type' ).dispatchEvent( new Event( 'close' ) );
   }
   
   onMouse( e )
@@ -118,7 +117,7 @@ export class SelectMode
   {
     if( e.target.classList.contains( 'not-this-month' ) ) return;
     if( keyboard.ShiftLeft || keyboard.ShiftRight ){
-      const dates = [...this.thisMonthDates];
+      const dates = [...document.querySelectorAll( 'div#this-month div.date:not( .not-this-month )' )];
       dates.slice( ...[dates.indexOf( this.lastNode ), dates.indexOf( e.target )].sort( ( a, b ) => a - b ).map( ( v, i ) => v + i ) ).forEach( ( d ) => {
         if( this.lastNode.querySelector( 'div.check-box' ).classList.contains( 'isselected' ) ){
           d.querySelector( 'div.check-box' ).classList.add( 'isselected' );
@@ -159,7 +158,7 @@ export class SelectMode
   onMove( e )
   {
     if( !this.isSelectMode || !e.target.querySelector( 'div.check-box' ) ) return;
-    document.querySelectorAll( 'div.date' ).forEach( d => {
+    document.querySelectorAll( '#this-month div.date' ).forEach( d => {
       const rect = d.getBoundingClientRect();
       const { clientX, clientY } = e.touches ? e.touches[0] : e;
       if( clientX > rect.x &&
@@ -168,7 +167,7 @@ export class SelectMode
           clientY < rect.y + rect.height )
       {
         if( d.classList.contains( 'not-this-month' ) ) return;
-        const dates = [...this.thisMonthDates];
+        const dates = [...document.querySelectorAll( 'div#this-month div.date:not( .not-this-month )' )];
         dates.slice( ...[dates.indexOf( e.target ), dates.indexOf( d )].sort( ( a, b ) => a - b ).map( ( v, i ) => v + i ) ).forEach( ( d ) => {
           if( e.target.querySelector( 'div.check-box' ).classList.contains( 'isselected' ) ){
             d.querySelector( 'div.check-box' ).classList.add( 'isselected' );
@@ -218,7 +217,7 @@ export class SelectMode
       if( !this.isSelectMode ){
         this.select();
       }
-      this.thisMonthDates.forEach( v => {
+      document.querySelectorAll( 'div#this-month div.date:not( .not-this-month )' ).forEach( v => {
         v.querySelector( 'div.check-box' ).classList.add( 'isselected' )
       } );
     }

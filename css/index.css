@@ -1,7 +1,7 @@
-* {
-/*   --bg-color: #FFFFFF;
-  --font-color: #4B4B4B;
-  --inactive-bg-color: #EAEAEA; */
+html {
+  --bg-color: #EAEAEA;
+  --font-color: #EAEAEA;
+  --inactive-bg-color: #EAEAEA;
   
   --active-bg-color: #4285f4;
   --active-font-color: #FFFFFF;
@@ -21,13 +21,12 @@ body {
   overflow: hidden;
   overscroll-behavior: none !important;
   touch-action: manipulation;
-  
 }
 
 .input-form > div > .button {
   position: relative;
   background: var( --active-bg-color );
-  color: var( --bg-color );
+  color: var( --active-font-color );
   margin: 0;
   border-radius: 3vw 3vw !important;
   border: 0 !important;
@@ -46,13 +45,9 @@ body {
   top: -40% !important;
 }
 
-.input-form > div > input {
+.input-form > div > input, .input-form > div > select {
   border-radius: 0 !important;
   border-bottom: solid 2px #888;
-}
-
-.input-form input, .input-form select {
-  padding: 1% 1% 0 5% !important;
 }
 
 svg {
@@ -78,7 +73,7 @@ div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ) {
 }
 
 div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
-  background: #EEE;
+    background: var( --inactive-bg-color );
 }
 
 div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
@@ -140,6 +135,7 @@ li#menu-list {
 
 li#menu-list > ul {
   position: relative;
+  color: var( --font-color );
   margin: 0;
   padding: 1.5em;
   transition: all .4s ease;
@@ -247,7 +243,7 @@ div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dar
   background: #4B4B4B;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div > .sample-date {
   position: relative;
   margin: 20% 25%;
   padding: 2px;
@@ -257,13 +253,13 @@ div#theme-settings > div.drawer-form > div#theme-select > label > div > .date {
   box-sizing: border-box;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-light > .sample-date {
   border: 2px solid #EAEAEA;
   color: #4B4B4B;
   background: #FFFFFF;
 }
 
-div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark > .date {
+div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dark > .sample-date {
   border: 2px solid #111111;
   color: #EEEEEE;
   background: #4B4B4B;
@@ -330,7 +326,7 @@ div#date-wrapper {
   margin: 2px;
 }
 
-#add-plan {
+.add-button {
   position: absolute;
   width: 3.5em;
   height: 3.5em;
@@ -348,11 +344,11 @@ div#date-wrapper {
   transition: background .2s ease;
 }
 
-#add-plan:active {
+.add-button:active {
   background: #3275e4;
 }
 
-#add-plan:before, #add-plan:after {
+.add-button:before, .add-button:after {
   content: '';
   position: absolute;
   top: 1em;
@@ -364,15 +360,15 @@ div#date-wrapper {
   z-index: 1;
 }
 
-#add-plan:after {
+.add-button:after {
   transform: rotate( 90deg );
 }
 
-#add-plan > #add-plan-message {
+.add-button > .add-button-message {
   pointer-events: none;
 }
 
-#add-shift-button > .drawer-menu > .drawer-form {
+#add-shift-drawer > .drawer-form {
   height: calc( 100 * var( --vh ) );
 }
 
@@ -388,13 +384,17 @@ div#date-wrapper {
 
 .plans {
   align-items: center;
-  background: #77d;
-  color: var( --bg-color );
+  background: var( --active-bg-color );
+  color: var( --active-font-color );
   display: flex;
   flex: 0 0 3em;
   justify-content: center;
   margin: 2px;
   text-align: center;
+  transition: background .2s ease;
+}
+.plans:hover {
+  background: var( --clicked-active-bg-color );
 }
 
 .have-plan {
@@ -418,10 +418,11 @@ div#date-wrapper {
   bottom: -1px;
   width: 0;
   height: 0;
+  color: var( --active-font-color );
   line-height: 100%;
   border-style: solid;
   border-width: 1em;
-  border-color: transparent #88F #88F transparent ;
+  border-color: transparent var( --active-bg-color ) var( --active-bg-color ) transparent ;
 }
 
 input#date {
@@ -501,16 +502,16 @@ div#settings {
   display: flex;
 }
 
-#settings > .drawer-menu > .drawer-form {
+#shift-type > .drawer-form {
   height: calc( 25 * var( --vh ) );
 }
 
 .date-shift-type {
   height: 1.5em;
   max-height: 40%;
-  background: #f55;
+  background: var( --active-bg-color );
   bottom: 0;
-  color: var( --bg-color );
+  color: var( --active-font-color );
   font-size: 0.9em;
   position: absolute;
   pointer-events: none;
@@ -519,94 +520,39 @@ div#settings {
   width: 100%;
 }
 
-#icon-preview {
+.icon-preview {
   flex: 0 1 20%;
 }
 
-#icon-preview > svg {
+.icon-preview > svg {
   transform: none;
   width: 80%;
   height: auto;
 }
 
-#icon-preview > .shift-type {
+.icon-preview > .shift-type {
   height: 100%;
   width: auto;
   display: flex;
 }
 
-div.drawer-menu {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 100vw;
-  z-index: 10;
-  background: var( --bg-color );
-  transform: translateY( calc( 100% + 50px ) );
-  transition: transform .3s cubic-bezier(0.6, 0.6, 0.3, 1);
+#group-operation {
+  height: 30%;
 }
 
-div.drawer-menu:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: calc( 100% + 1px );
-  background: var( --bg-color );
-  bottom: -100%;
-  z-index: 12;
+#group-operation > .drawer-form {
+  height: 100%;
 }
 
-div.menu-handle {
-  position: absolute;
-  top: -50px;
-  width: 100%;
-  height: 50px;
-  border-top: solid 1px #CCC;
-  border-radius: 25px 25px 0 0;
-  background: var( --bg-color );
+#group-operation > .drawer-form > .input-form > div {
+  margin: 0;
+  height: 80%;
+  align-items: center;
+}
+#group-operation > .drawer-form > .input-form > div#select-group-wrapper {
+  display: flex;
 }
 
-div.menu-handle:before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 45%;
-  width: 10%;
-  height: 5px;
-  border-radius: 2px;
-  background: #888;
-  z-index: 1;
-}
-
-div.menu-handle > div.close-button {
-  position: absolute;
-  top: calc( 50% - ( 25px / 2 ) );
-  right: 20px;
-  width: 25px;
-  height: 25px;
-  border: 3px solid #888;
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-
-div.menu-handle > div.close-button:before, div.menu-handle > div.close-button:after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: calc( 50% - ( 3px / 2 ) );
-  width: 3px;
-  height: calc( 100% - ( 2px * 2 ) );
-  border-radius: 1px;
-  background: #888;
-  z-index: 1;
-}
-
-div.menu-handle > div.close-button:after {
-  transform: rotate( 45deg );
-}
-div.menu-handle > div.close-button:before {
-  transform: rotate( -45deg );
-}
 div#settings > svg{
   transition: transform .4s ease;
 }
@@ -648,6 +594,7 @@ div#content-wrapper.list > div#calendar-wrapper {
 }
 
 div#content-wrapper.share > div#calendar-wrapper {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -700,6 +647,7 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
   overflow: hidden;
   scroll-snap-type: x mandatory;
   margin-top: calc( 1.5em + 2px );
+  margin-right: 2px;
 }
 
 div#content-wrapper.month > div#calendar-wrapper > div#calendar > div {
@@ -840,6 +788,14 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar > div > .week > 
   display: none;
 }
 
+div#content-wrapper:not( .share ) div#add-group {
+  display: none;
+}
+
+div#add-group {
+  background: #3de44a;
+}
+
 div#share-wrapper {
   width: 80%;
   display: flex;
@@ -849,7 +805,9 @@ div#share-wrapper {
 div#share-wrapper > div#name-wrapper {
   display: flex;
   width: 100%;
+  height: 1.5em;
   overflow: hidden;
+  margin-bottom: 2px;
 }
 
 div#share-list {
@@ -860,14 +818,40 @@ div#share-list {
 }
 
 div#share-wrapper > div#name-wrapper > div.share-name {
+  position: relative;
   text-align: center;
   width: 20vw;
-  height: 1.5em;
+  height: 100%;
   margin: 1px;
+  color: var( --font-color );
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
   flex-shrink: 0;
+}
+
+div.share-name.add-member:before, div.share-name.add-member:after {
+  content: '';
+  position: absolute;
+  top: .3em;
+  right: calc( 50% + .4em );
+  width: 2px;
+  height: calc( 1em - ( 2px * 2 ) );
+  border-radius: 1px;
+  background: var( --active-bg-color );
+/*   background: #3de44a; */
+  z-index: 1;
+}
+div.share-name.add-member:after {
+  transform: rotate( 90deg );
+}
+
+div.share-name.add-member > svg {
+  position: relative;
+  left: calc( .4em );
+  height: 1.5em;
+  fill: var( --active-bg-color );
+/*   fill: #3de44a; */
 }
 
 div#share-list > div.share-date-wrapper {
@@ -879,11 +863,15 @@ div#share-list > div.share-date-wrapper {
 
 div#share-list > div.share-date-wrapper > div.share-date {
   height: calc( 60 * var( --vh ) / 10 );
+  position: relative;
   min-height: 3em;
   margin: 1px 0;
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
+}
+div#share-list > div.share-date-wrapper.add-member > div.share-date {
+  background: var( --inactive-bg-color );
 }
 
 #calendar, #plan {
@@ -900,10 +888,10 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
 }
 
 .week > .date:first-of-type, #day > div:first-of-type {
-  color: #f33 !important;
+  color: #f55 !important;
 }
 .week > .date:last-of-type, #day > div:last-of-type {
-  color: #33f !important;
+  color: #55f !important;
 }
 
 div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.today {
@@ -1076,11 +1064,11 @@ div#share {
   }
   
   div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {
-    background: #EEE;
+    background: var( --inactive-bg-color );
   }
   
   div#header > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):active {
-    background: #DDD;
+    background: var( --inactive-bg-color );
   }
   
   div#header.select-mode > div:not( #menu-button ):not( #body-wrapper ):not( #settings ):hover {
@@ -1098,19 +1086,19 @@ div#share {
     background: #1a73e844;
   }
   
+  ::-webkit-scrollbar {
+/*     display: none; */
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 10px
+  }
 }
 
 @media screen and ( min-aspect-ratio: 1 / 1 ) {
   
   div#content-wrapper.month {
     flex-direction: row;
-  }
-  
-  div.drawer-menu {
-    width: calc( 100vw / 3 );
-  }
-  div.drawer-menu > div.drawer-form {
-    max-height: calc( 100 * var( --vh ) - 50px - 3em );
   }
   
   div.shift-type {
