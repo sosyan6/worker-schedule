@@ -136,6 +136,16 @@ app.post( '/createGroup', ( req, res ) => {
     
 } );
 
+app.get( '/leaveGroup/:GID', ( req, res ) => {
+  console.log( 'aaaaaa' );
+  fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
+    if( err ) res.send( err );
+    const newJson = JSON.parse( data );
+    console.log( newJson );
+  } );
+  res.send( 'aaaa' );
+} );
+
 app.get( '/join/:GID', ( req, res ) => {
   if( !req.params.GID ){
     res.send( '不正なURLです' );
@@ -177,16 +187,6 @@ app.get( '/join/:GID', ( req, res ) => {
     res.send( 'グループが見つかりませんでした' );
     return;
   }
-} );
-
-app.post( '/leaveGroup/:GID', ( req, res ) => {
-  console.log( 'aaaaaa' );
-  fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
-    if( err ) res.send( err );
-    const newJson = JSON.parse( data );
-    console.log( newJson );
-  } );
-  res.send( 'aaaa' );
 } );
 
 app.post( /^\/getdata(\?.*)?$/, ( req, res ) => {
@@ -261,6 +261,7 @@ app.post( '/getGroupName/:GID', ( req, res ) => {
 } );
 
 app.get( /\/.*/, ( req, res ) => {
+  console.log( req.url );
   if( req.url === '/' && req.cookies.SID ) res.sendFile( `${ __dirname }/views/index.html` );
   else if( req.url === '/' ) res.sendFile( `${ __dirname }/views/login.html` );
   else res.sendFile( `${ __dirname }/${ req.url }` );

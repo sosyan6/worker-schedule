@@ -55,7 +55,7 @@ export class Share
       const names = await this.groupNames;
       const s = await streamData;
       console.log( names );
-      await this.leaveGroup( names[currentGroupName.value].GID );
+      this.leaveGroup( names[currentGroupName.value].GID ).then( () => console.log( '????' ) );
       ( await s.ownData ).data.group = ( await s.ownData ).data.group.filter( v => v !== names[currentGroupName.value].GID );
       [...currentGroupName.querySelectorAll( 'option:not( [value="create-group"] )' )].find( v => v.value === currentGroupName.value ).remove();
       currentGroupName.dispatchEvent( new Event( 'change' ) );
@@ -78,11 +78,6 @@ export class Share
       navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${names[number].GID}`);
       displayURL.dispatchEvent( new Event( 'open' ) );
     } );
-  }
-  
-  async leaveGroup( GID )
-  {
-    return ( await streamData ).getData( '/leaveGroup/' + GID );
   }
     
   setGroupSelect()
@@ -172,6 +167,11 @@ export class Share
   async getGroupName( v )
   {
     return ( await streamData ).getData( '/getGroupName/' + v );
+  }
+  
+  async leaveGroup( v )
+  {
+    return ( await streamData ).getData( '/leaveGroup/' + v );
   }
   
   getGroupNames(){
