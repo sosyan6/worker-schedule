@@ -92,9 +92,7 @@ export class SetData {
     {
       this.initMonthShift( date );
       this.initDayShift( date );
-      for( const [key, value] of Object.entries( data ) ){
-        this.shift[date.format( 'YYYY/MM' )][date.format( 'DD' )][key] = value;
-      }
+      Object.assign( this.shift[date.format( 'YYYY/MM' )][date.format( 'DD' )], data );
     };
     
     switch( args.length )
@@ -209,15 +207,16 @@ export class SetData {
     
     for( let i = len( this.shiftType ) - 1; i >= 0 ; i-- ){
       const icon = this.createIconElement( this.shiftType[shiftKeys[i]], shiftKeys[i] );
+      // icon.setAttribute( 'count', i );
       
       $( icon ).longpress( () => {
         
-        const drawer = document.querySelector( '#add-shift-button > .drawer-menu' );
+        const drawer = document.querySelector( '#add-shift-drawer' );
         const addShift = document.querySelector( '#add-shift-form' );
         const data = this.shiftType[shiftKeys[i]];
         const name = shiftKeys[i];
         
-        console.log( data );
+        icon.classList.add( 'current-edit' );
         
         addShift.querySelectorAll( 'div > *' ).forEach( e => {
           if( e.name ){
@@ -231,6 +230,10 @@ export class SetData {
         } );
         addShift.querySelector( '.submit-button' ).style.display = 'none';
         addShift.querySelector( '.edit-button' ).style.display = 'flex';
+        
+        document.querySelectorAll( '.icon-preview' ).forEach( async icon => {
+          icon.querySelectorAll( '*' ).forEach( e => e.remove() );
+        } );
         
         drawer.dispatchEvent( new Event( 'open' ) );
       }, () => {}, 300 );
@@ -259,9 +262,14 @@ export class SetData {
         const dateShiftType = document.createElement( 'div' );
         const shiftInfo = shiftType[shiftName.shiftName];
         
+        if( !shiftInfo ){
+          delete shiftName.shiftName;
+          return;
+        }
+        
         dateShiftType.classList.add( 'date-shift-type' );
         dateShiftType.innerText = shiftInfo.initial;
-        dateShiftType.style.background =  shiftInfo.color;
+        dateShiftType.style.background = shiftInfo.color;
 
         if( shiftInfo.color.isBright() )
           dateShiftType.style.color = '#000';
@@ -273,17 +281,21 @@ export class SetData {
         
       if( shiftName.schedule )
       {
-        this.setPlanFlag( dateElement );
+        this.setPlanFlag( shiftName.schedule, dateElement );
       }
     } );
   }
   
-  setPlanFlag( dateElement )
+  
+  setPlanFlag( scheduleArray, dateElement )
   {
-    const planDiv = document.createElement( 'div' );
-    planDiv.classList.add( 'have-plan' );
-    dateElement.querySelector( '.have-plan' )?.remove();
-    dateElement.appendChild( planDiv );
+    if( scheduleArray.length ){
+      const planDiv = document.createElement( 'div' );
+      planDiv.classList.add( 'have-plan' );
+      dateElement.querySelector( '.have-plan' )?.remove();
+      dateElement.appendChild( planDiv );
+    }
+    else dateElement.querySelector( '.have-plan' )?.remove(); 
   }
   
   createIconElement( sData, name = "" )

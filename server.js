@@ -3,6 +3,7 @@ const cookieParser = require( 'cookie-parser' );
 const bodyParser = require( 'body-parser' );
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
+const nodeMailer = require( 'nodemailer' );
 const app = express();
 
 const baseJSON = JSON.parse( fs.readFileSync( 'baseData.json', 'utf-8' ) );
@@ -16,39 +17,78 @@ function genHash256( hash1, hash2 ){
   return crypto.createHash('sha256').update( nameHex + passHex, 'utf8').digest('hex');
 }
 
+function sendMail( sendAddress ){
+  const address = 'worker.schedule.server@gmail.com';
+  const transporter = nodeMailer.createTransport(
+  {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // SSL
+    auth: {
+      user: address,
+      pass: process.env.GMAIL_PASSWORD
+    }
+  } );
+  const mailOptions1 = {
+    from: `ワーカースケジュール<${address}>`,
+    to: sendAddress,
+    subject: '認証メール',
+    text: 
+    `
+    メールアドレスを認証しました。
+    心当たりのない場合はお手数ですが削除いただけると幸いです。
+    `
+  }
+  
+  transporter.sendMail( mailOptions1, ( error, info ) => {
+    if( error ){
+      console.log(error);
+    }else{
+      console.log( 'Email sent: ' + info.response );
+    }
+  } );
+}
+
 app.post( '/signup', ( req, res ) => {
-  console.log( 'aaaaa' );
   const hashHex = genHash256( req.body.name, req.body.password );
-  if( !fs.existsSync(`.data/user/${hashHex}.json`) ){
+  if( !fs.existsSync(`.data/user/${hashHex}.json`) && !fs.existsSync(`.data/userInfo/${req.body.email}.json`) ){
+    
     //  ファイルがないなら作成して成功を返す
     const newJson = baseJSON;
     newJson.userName = req.body.name;
     fs.writeFile( `.data/user/${hashHex}.json`, JSON.stringify( newJson ), err => {
       if( err ) {
-        res.send('error'); return;
+        res.send('error');
+        res.end();
+        return;
       }
     } );
-    if( !fs.existsSync(`.data/userInfo/${req.body.email}.json`) )
-    {
-      const userInfo = `{ SID: ${hashHex} }`;
-      fs.writeFile( `.data/userInfo/${req.body.email}.json`, JSON.stringify( userInfo ), err => {
-        if( err ) {
-          console.log( err ); return;
-        }
-      } );
-      fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( `{ email: ${req.body.email}, name: ${req.body.name}, password: ${req.body.password} }` ), err => {
-        if( err ) {
-          console.log( err ); return;
-        }
-      } );
-    }
-    //  maxAgeはmsで表すらしい
-    res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
-    res.send( 'login Success' );
-    return;
 
+    const userInfo = `{ SID: ${hashHex} }`;
+    fs.writeFile( `.data/userInfo/${req.body.email}.json`, JSON.stringify( userInfo ), err => {
+      if( err ) {
+        res.send( 'error' );
+        res.end();
+        return;
+      }
+    } );
+    fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( `{ email: ${req.body.email}, name: ${req.body.name}, password: ${req.body.password} }` ), err => {
+      if( err ) {
+        res.send('error');
+        res.end();
+        return;
+      }
+      //  maxAgeはmsで表すらしい
+      res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
+      res.send( 'login Success' );
+      res.end();
+      // sendMail( req.body.email );
+      return;
+    } );
+    
   }else{
-    res.send( 'already Exist' );
+    res.send( 'Already User Exist or Already Email Exist' );
+    res.end();
   }
 } );
 
@@ -65,7 +105,6 @@ app.post( '/signin', ( req, res ) => {
 } );
 
 app.post( '/savedata', ( req, res ) => {
-  console.log( req.body );
   if( fs.existsSync(`.data/user/${req.cookies.SID}.json`) ){
     fs.writeFile( `.data/user/${req.cookies.SID}.json`, JSON.stringify( req.body ), ( err ) => {
       if( err ){
@@ -79,7 +118,7 @@ app.post( '/savedata', ( req, res ) => {
 } );
 
 app.post( '/createGroup', ( req, res ) => {
-  const hash = genHash256( req.body.SID, req.body.groupName );
+  const hash = genHash256( crypto.randomBytes( 8 ).toString(), crypto.randomBytes( 8 ).toString() );
   if( !fs.existsSync( `.data/group/${hash}.json` ) )
   {
     fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( { groupInfo: { groupName: req.body.groupName }, users: [req.body.SID] } ), ( err ) => {
@@ -98,7 +137,6 @@ app.post( '/createGroup', ( req, res ) => {
 } );
 
 app.get( '/join/:GID', ( req, res ) => {
-  console.log( 'aaaaaaaaaadawdada' );
   if( !req.params.GID ){
     res.send( '不正なURLです' );
     return;
@@ -141,6 +179,16 @@ app.get( '/join/:GID', ( req, res ) => {
   }
 } );
 
+app.post( '/leaveGroup/:GID', ( req, res ) => {
+  console.log( 'aaaaaa' );
+  fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
+    if( err ) res.send( err );
+    const newJson = JSON.parse( data );
+    console.log( newJson );
+  } );
+  res.send( 'aaaa' );
+} );
+
 app.post( /^\/getdata(\?.*)?$/, ( req, res ) => {
   
   fs.readFile( `.data/user/${req.body.SID}.json`, 'utf-8', ( err, data ) => {
@@ -170,10 +218,45 @@ app.post( '/getGroupData/:GID', ( req, res ) => {
         res.status( 404 ).send( 'error' );
         return;
       }
-      console.log( data );
-      const getGroupData = ( ID ) => new Promise( resolve => fs.readFile( `.data/user/${ID}.json`, 'utf-8', ( err, userData ) => { const json = JSON.parse( userData ); delete json.data.group; resolve( json ) } ) );
-      Promise.all( JSON.parse( data ).users.map( async v => await getGroupData( v ) ) ).then( j => res.json( j ) );
+      const getGroupData = ( ID ) => new Promise( resolve => fs.readFile( `.data/user/${ID}.json`, 'utf-8', ( err, userData ) => { 
+        const json = JSON.parse( userData );
+        delete json.data.group;
+        
+        //  最初のループでYYYY/MMのvalueを取る
+        Object.values( json.data.shift ).forEach( ( v ) => {
+          //  次のループでDDのvalueを取る
+          Object.values( v ).forEach( ( value ) => {
+            //  DDのvalue内のschedule(予定)を削除する　->  プライバシー保護のため
+            delete value.schedule;
+            //  もしDDのvalue内にshiftNameがあったら　->
+            //  v.shiftNameと同じshiftTypeがあったらinitialに書き換える
+            //  違ければカラ文字を代入
+            if( value.shiftName ){
+              value.shiftName = json.data.shiftType[value.shiftName] ? json.data.shiftType[value.shiftName].initial : "";
+            }
+          } );
+        } );
+        delete json.data.shiftType;
+        resolve( json );
+      } ) );
+      Promise.all( JSON.parse( data ).users.filter( v => v !== req.cookies.SID ).map( async v => await getGroupData( v ) ) ).then( j => res.json( j ) );
     } );
+  }
+} );
+
+app.post( '/getGroupName/:GID', ( req, res ) => {
+  if( fs.existsSync( `.data/group/${req.params.GID}.json` ) )
+  {
+    fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
+      if( err )
+      {
+        console.log( err );
+        res.status( 404 ).send( 'error' );
+        return;
+      }
+      const json = JSON.parse( data );
+      res.json( { 'groupName': json.groupInfo.groupName, 'GID': req.params.GID } );
+  } );
   }
 } );
 

@@ -54,7 +54,6 @@
   position: relative;
   font-size: 1.2em;
   width: 100%;
-  height: 100%;
   text-align: center;
   color: black;
 }
@@ -108,6 +107,39 @@
 
 .time-message {
   padding: 0 !important;
+}
+
+.general-button {
+  border-radius: 0;
+}
+
+.general-button:before,
+.general-button:after {
+  position: absolute;
+
+  width: 100%;
+  height: 2px;
+
+  content: '';
+  -webkit-transition: all .3s;
+  transition: all .3s;
+
+  background: #000;
+}
+
+.general-button:before {
+  top: 5%;
+  left: 0;
+}
+
+.general-button:after {
+  right: 0;
+  bottom: 5%;
+}
+
+.general-button:hover:before,
+.general-button:hover:after {
+  width: 0;
 }
 
 .button {

@@ -50,9 +50,8 @@ export class Calendar
       date.addEventListener( 'click', () => {
         if( document.querySelector( 'div#header' ).classList.contains( 'select-mode' ) || date.classList.contains( 'not-this-month' ) ) return;
         if( date.classList.contains( 'select-date' ) ){
-          document.querySelector( 'div#settings > .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
+          document.querySelector( 'div#shift-type' ).dispatchEvent( new Event( 'open' ) );
         }else{
-          console.log( 1 ); 
           this.setSelectDate( getDateFromDateElement( date ), date );
           this.currentDate = getDateFromDateElement( date );
         }
@@ -191,30 +190,35 @@ export class Calendar
   async setPlan( date )
   {
     document.querySelectorAll( '.plans' ).forEach( e => e.remove() );
+    
+    const planForm = document.querySelector( '#add-plan-form' );
     const dayShift = ( await setData ).getDayShift( date );
     if( !dayShift || !dayShift.hasOwnProperty( 'schedule' ) ) return;
 
-    dayShift.schedule.forEach( ( v ) =>
+    dayShift.schedule.forEach( ( v, count ) =>
     {  
       const planDiv = document.createElement( 'div' );
       const memoDiv = document.createElement( 'div' );
       memoDiv.textContent = v.scheduleMemo;
       planDiv.classList.add( 'plans' );
       planDiv.appendChild( memoDiv );
+      planDiv.setAttribute( 'count', count );
       
       $( planDiv ).longpress( () => {
-        const planForm = document.querySelector( '#add-plan-form' );
-        document.querySelector( '#add-plan .drawer-menu' ).dispatchEvent( new Event( 'open' ) );
+        planDiv.classList.add( 'current-edit' );
+        document.querySelector( '#add-plan-drawer' ).dispatchEvent( new Event( 'open' ) );
         planForm.querySelectorAll( 'div > *' ).forEach( e => {
           if( e.name ) e.value = v[e.name];
         } );
         
         planForm.querySelector( '.submit-button' ).style.display = 'none';
         planForm.querySelector( '.edit-button' ).style.display = 'flex';
+        
       } , () => {}, 300 );
       
       document.querySelector( '#plan-list' ).appendChild( planDiv );
     } );
+    
   }
   
   setCurrentMonth( option = {} )

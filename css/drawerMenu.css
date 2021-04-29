@@ -88,3 +88,13 @@ div.menu-handle > div.close-button:after {
 div.menu-handle > div.close-button:before {
   transform: rotate( -45deg );
 }
+
+
+@media screen and ( min-aspect-ratio: 1 / 1 ) {
+  div.drawer-menu{
+    max-width: calc( 100vw / 3 );
+  }
+  div.drawer-menu > div.drawer-form {
+    max-height: calc( 100 * var( --vh ) - 50px - 3em );
+  }
+}

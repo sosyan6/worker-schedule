@@ -9,10 +9,10 @@ export class StreamData
   onDownloadSuccessed( json )
   {
     this.getCookies();
-    document.querySelector( '#add-shift-button > .drawer-menu' ).addEventListener( 'onclose', () => this.saveData() );
+    document.querySelector( '#add-shift-drawer' ).addEventListener( 'onclose', () => this.saveData() );
     document.querySelector( '#prev-month-button' ).addEventListener( 'save', () => this.saveData() );
     document.querySelector( '#next-month-button' ).addEventListener( 'save', () => this.saveData() );
-    document.querySelector( '#display-name' ).textContent = decodeURI(this.cookies.name) + ' さん';
+    document.querySelector( '#display-name' ).textContent = decodeURI( this.cookies.name ) + ' さん';
     return json;
   }
   

@@ -64,13 +64,16 @@ export class DrawerMenu
   
   open( drawer )
   {
+    [...document.querySelectorAll( '.drawer-menu' )].filter( d => d.style.transform === 'translateY(0px)' ).forEach( drawer => drawer.dispatchEvent( new Event( 'close' ) ) );
     drawer.style.transform = `translateY( 0 )`;
-    drawer.dispatchEvent( new Event( 'onopen' ) )
+    drawer.dispatchEvent( new Event( 'onopen' ) );
+    drawer.style.pointerEvents = '';
   }
   
   close( drawer )
   {
     drawer.style.transform = ``;
-    drawer.dispatchEvent( new Event( 'onclose' ) )
+    drawer.dispatchEvent( new Event( 'onclose' ) );
+    drawer.style.pointerEvents = 'none';
   }
 }

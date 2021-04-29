@@ -1,7 +1,7 @@
-* {
-/*   --bg-color: #FFFFFF;
-  --font-color: #4B4B4B;
-  --inactive-bg-color: #EAEAEA; */
+html {
+  --bg-color: #EAEAEA;
+  --font-color: #EAEAEA;
+  --inactive-bg-color: #EAEAEA;
   
   --active-bg-color: #4285f4;
   --active-font-color: #FFFFFF;
@@ -21,7 +21,6 @@ body {
   overflow: hidden;
   overscroll-behavior: none !important;
   touch-action: manipulation;
-  
 }
 
 .input-form > div > .button {
@@ -46,7 +45,7 @@ body {
   top: -40% !important;
 }
 
-.input-form > div > input {
+.input-form > div > input, .input-form > div > select {
   border-radius: 0 !important;
   border-bottom: solid 2px #888;
 }
@@ -136,6 +135,7 @@ li#menu-list {
 
 li#menu-list > ul {
   position: relative;
+  color: var( --font-color );
   margin: 0;
   padding: 1.5em;
   transition: all .4s ease;
@@ -326,7 +326,7 @@ div#date-wrapper {
   margin: 2px;
 }
 
-#add-plan {
+.add-button {
   position: absolute;
   width: 3.5em;
   height: 3.5em;
@@ -344,11 +344,11 @@ div#date-wrapper {
   transition: background .2s ease;
 }
 
-#add-plan:active {
+.add-button:active {
   background: #3275e4;
 }
 
-#add-plan:before, #add-plan:after {
+.add-button:before, .add-button:after {
   content: '';
   position: absolute;
   top: 1em;
@@ -360,15 +360,15 @@ div#date-wrapper {
   z-index: 1;
 }
 
-#add-plan:after {
+.add-button:after {
   transform: rotate( 90deg );
 }
 
-#add-plan > #add-plan-message {
+.add-button > .add-button-message {
   pointer-events: none;
 }
 
-#add-shift-button > .drawer-menu > .drawer-form {
+#add-shift-drawer > .drawer-form {
   height: calc( 100 * var( --vh ) );
 }
 
@@ -502,7 +502,7 @@ div#settings {
   display: flex;
 }
 
-#settings > .drawer-menu > .drawer-form {
+#shift-type > .drawer-form {
   height: calc( 25 * var( --vh ) );
 }
 
@@ -536,6 +536,22 @@ div#settings {
   display: flex;
 }
 
+#group-operation {
+  height: 30%;
+}
+
+#group-operation > .drawer-form {
+  height: 100%;
+}
+
+#group-operation > .drawer-form > .input-form > div {
+  margin: 0;
+  height: 80%;
+  align-items: center;
+}
+#group-operation > .drawer-form > .input-form > div#select-group-wrapper {
+  display: flex;
+}
 
 div#settings > svg{
   transition: transform .4s ease;
@@ -578,6 +594,7 @@ div#content-wrapper.list > div#calendar-wrapper {
 }
 
 div#content-wrapper.share > div#calendar-wrapper {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -629,7 +646,7 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
   flex-shrink: 0;
   overflow: hidden;
   scroll-snap-type: x mandatory;
-  margin-top: calc( 1.5em + 4px );
+  margin-top: calc( 1.5em + 2px );
   margin-right: 2px;
 }
 
@@ -771,6 +788,14 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar > div > .week > 
   display: none;
 }
 
+div#content-wrapper:not( .share ) div#add-group {
+  display: none;
+}
+
+div#add-group {
+  background: #3de44a;
+}
+
 div#share-wrapper {
   width: 80%;
   display: flex;
@@ -780,6 +805,7 @@ div#share-wrapper {
 div#share-wrapper > div#name-wrapper {
   display: flex;
   width: 100%;
+  height: 1.5em;
   overflow: hidden;
   margin-bottom: 2px;
 }
@@ -792,15 +818,40 @@ div#share-list {
 }
 
 div#share-wrapper > div#name-wrapper > div.share-name {
+  position: relative;
   text-align: center;
   width: 20vw;
-  height: 1.5em;
+  height: 100%;
   margin: 1px;
   color: var( --font-color );
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
   flex-shrink: 0;
+}
+
+div.share-name.add-member:before, div.share-name.add-member:after {
+  content: '';
+  position: absolute;
+  top: .3em;
+  right: calc( 50% + .4em );
+  width: 2px;
+  height: calc( 1em - ( 2px * 2 ) );
+  border-radius: 1px;
+  background: var( --active-bg-color );
+/*   background: #3de44a; */
+  z-index: 1;
+}
+div.share-name.add-member:after {
+  transform: rotate( 90deg );
+}
+
+div.share-name.add-member > svg {
+  position: relative;
+  left: calc( .4em );
+  height: 1.5em;
+  fill: var( --active-bg-color );
+/*   fill: #3de44a; */
 }
 
 div#share-list > div.share-date-wrapper {
@@ -818,6 +869,9 @@ div#share-list > div.share-date-wrapper > div.share-date {
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
+}
+div#share-list > div.share-date-wrapper.add-member > div.share-date {
+  background: var( --inactive-bg-color );
 }
 
 #calendar, #plan {
@@ -1032,19 +1086,19 @@ div#share {
     background: #1a73e844;
   }
   
+  ::-webkit-scrollbar {
+/*     display: none; */
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 10px
+  }
 }
 
 @media screen and ( min-aspect-ratio: 1 / 1 ) {
   
   div#content-wrapper.month {
     flex-direction: row;
-  }
-  
-  div.drawer-menu {
-    max-width: calc( 100vw / 3 );
-  }
-  div.drawer-menu > div.drawer-form {
-    max-height: calc( 100 * var( --vh ) - 50px - 3em );
   }
   
   div.shift-type {
