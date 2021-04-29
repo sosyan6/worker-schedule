@@ -136,14 +136,15 @@ app.post( '/createGroup', ( req, res ) => {
     
 } );
 
-app.get( '/leaveGroup/:GID', ( req, res ) => {
+app.post( '/leaveGroup/:GID', ( req, res ) => {
   console.log( 'aaaaaa' );
   fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) => {
     if( err ) res.send( err );
     const newJson = JSON.parse( data );
-    console.log( newJson );
+    newJson.users = newJson.users.filter( v => v !== req.cookies.SID );
+    fs.writeFile( `.data/group/${req.params.GID}.json`, JSON.stringify( newJson ), ( err ) => { if( err ) res.send( err ) } );
   } );
-  res.send( 'aaaa' );
+  res.send( 'グループから退出しました' );
 } );
 
 app.get( '/join/:GID', ( req, res ) => {
