@@ -2,6 +2,13 @@
 <html lang = "ja">
   <head>
     <meta charset="utf-8" />
+    <meta name="keywords" content="シフト共有,シフト,カレンダー,予定表,ウェブアプリ" />
+    <meta name="description" content="ワーカースケジュールはシフトを共有できるカレンダーウェブアプリです。だれでも簡単にシフトを入力できて個人的な予定も入れることができます！">
+    <meta property="og:description" content="ワーカースケジュールはシフトを共有できるカレンダーウェブアプリです。だれでも簡単にシフトを入力できて個人的な予定も入れることができます！" />
+    <meta property="og:title" content="ワーカースケジュール" />
+    <meta property="og:image" content="https://cdn.discordapp.com/attachments/696373386628300840/837021136364765244/835494343199948800.png" />
+    <meta property="og:url" content="https://worker-schedule.glitch.me/" />
+    <meta property="og:locale" content="ja_JP" />
     <meta
       name="viewport"
       content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
@@ -17,42 +24,45 @@
   <body>
     <div id = "login">
       <div id = "sign-in" class = "button">
-        <div class = "input-form">
+        <form class = "input-form">
           <div class = "input-wrapper">
             <div>
               <input name = "name" placeholder=" ">
-              <label>Name</label>
+              <label>表示名</label>
             </div>
             <div>
-              <input type = "password" name = "password" placeholder=" " autocomplete="new-password">
-              <label>Password</label>
+              <input type = "password" name = "password" placeholder=" " minlength="8" autocomplete>
+              <label>パスワード</label>
             </div>
             <div class = "email">
-              <input type = "email" name = "email" placeholder=" ">
-              <label>Email</label>
+              <input type = "email" name = "email" placeholder=" " pattern="^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$" required>
+              <label>メールアドレス</label>
             </div>
           </div>
-        </div>
+        </form>
         <div class = "button-text">
-          Sign in
+          ログイン
         </div>
       </div>
       <div id = "sign-up" class = "button">
-        <div class = "input-form">
+        <form class = "input-form">
           <div class = "input-wrapper">
             <div class = "name">
               <input name = "name" placeholder=" ">
-              <label>Name</label>
+              <label>表示名もしくはメールアドレス</label>
             </div>
             <div class = "password">
-              <input type = "password" name = "password" placeholder=" ">
-              <label>Password</label>
+              <input type = "password" name = "password" placeholder=" " minlength="8">
+              <label>パスワード(8文字以上)</label>
             </div>
           </div>
-        </div>
+        </form>
         <div class = "button-text">
-          Sign up
+          新規登録
         </div>
+      </div>
+      <div id="forget">
+        <a href="views/forget.html">パスワードを忘れた</a>
       </div>
     </div>
   </body>

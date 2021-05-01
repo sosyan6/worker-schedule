@@ -66,3 +66,16 @@ function getDateFromDateElement( element )
   
   return date;
 }
+
+function getCookies()
+{
+  const cookies = {};
+  document.cookie.split( ';' ).forEach( cookie =>
+  {
+    cookie = cookie.replace( ' ', '' );
+    const data = cookie.split( '=' );
+    cookies[data[0]] = data[1];
+  } );
+  //  一応外部からも取得できるようにする
+  return cookies;
+}

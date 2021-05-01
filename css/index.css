@@ -1,10 +1,10 @@
 html {
-  --bg-color: #EAEAEA;
-  --font-color: #EAEAEA;
-  --inactive-bg-color: #EAEAEA;
+  --bg-color: #777777;
+  --font-color: #777777;
+  --inactive-bg-color: #777777;
   
-  --active-bg-color: #4285f4;
-  --active-font-color: #FFFFFF;
+  --active-bg-color: #777777;
+  --active-font-color: #777777;
   
 }
 
@@ -43,6 +43,19 @@ body {
 
 .time-input + label {
   top: -40% !important;
+}
+
+.drawer-form .input-form input, .drawer-form .input-form select {
+  background: var( --bg-color );
+  color: var( --font-color );
+}
+.drawer-form .input-form input:focus + label, .drawer-form .input-form input:not(:placeholder-shown) + label {
+  background: var( --bg-color );
+  color: var( --font-color );
+}
+
+input[type="time"] ::-webkit-calendar-picker-indicator{
+  
 }
 
 .input-form > div > input, .input-form > div > select {
@@ -92,7 +105,7 @@ div#menu-button > svg {
 div#menu {
   position: fixed;
   height: calc( 100 * var( --vh ) );
-  width: 70vw;
+  width: calc( 100vw * 2 / 3 );
   background: var( --bg-color );
   top: 0;
   left: 0;
@@ -116,7 +129,11 @@ div#header.select-mode div#menu:after {
 }
 
 #delete-shift-button {
-  color: #000;
+  color: var( --font-color );
+}
+
+#delete-shift-button > .shift-type-initial{
+  color: var( --font-color );
 }
 
 #display-name {
@@ -124,24 +141,28 @@ div#header.select-mode div#menu:after {
   margin: auto;
   text-align: center;
   font-weight: bold;
-  
 }
 
-li#menu-list {
+ul#menu-list {
   display: flex;
   flex-direction: column;
-  height: calc( 100% - 3em );
+  height: calc( 100% - 6em );
+  padding-inline-start: 0;
+  margin-block: 0;
+  overflow:  scroll;
 }
 
-li#menu-list > ul {
+ul#menu-list > li {
   position: relative;
   color: var( --font-color );
   margin: 0;
   padding: 1.5em;
   transition: all .4s ease;
+  list-style: none;
+  white-space: nowrap;
 }
 
-li#menu-list > ul:after {
+ul#menu-list > li:after {
   content: '';
   position: absolute;
   width: 100%;
@@ -151,35 +172,40 @@ li#menu-list > ul:after {
 	background: #BBB;
 }
 
-li#menu-list > ul#signout {
+div#signout {
   color: #f00;
-  margin-top: auto;
+/*   margin-top: auto; */
   font-weight: bold;
   width: 100%;
+  height: 3em;
   padding: 0;
   display: flex;
+  position: absolute;
+  bottom: 0;
   overflow: hidden;
+  border-top: 1px solid #BBB;
 }
-li#menu-list > ul#signout:after {
+
+div#signout:after {
   top: 0;
 }
 
-ul#signout > div {
-  padding: 1.5em;
+div#signout > div {
   width: 100%;
-  height: 100%;
+  margin: auto;
+  text-align: center;
   flex-shrink: 0;
   box-sizing: border-box;
   transition: transform .4s ease;
 }
 
-li#menu-list > ul:hover:not(#signout) {
+ul#menu-list > li:hover:not(#signout) {
   padding-left: 4em;
-  background: var( --hover-bg-color );
+  background: var( --inactive-bg-color );
 }
 
-li#menu-list > ul > div:hover {
-  background: var( --hover-bg-color );
+ul#menu-list > li > div:hover {
+  background: var( --inactive-bg-color );
 }
 
 div#theme-settings > div.drawer-form {
@@ -266,7 +292,7 @@ div#theme-settings > div.drawer-form > div#theme-select > label > div#sample-dar
 }
 
 
-ul#signout.confirm > div {
+div#signout.confirm > div {
   transform: translateX(-100%);
 }
 
@@ -300,6 +326,10 @@ div#menu-header {
   display: flex;
   background: var( --bg-color );
   border-bottom: solid 1px #BBB;
+  transition: transform .4s ease;
+}
+div#menu-header:hover {
+  background: var( --inactive-bg-color );
 }
 
 div#menu-header > svg {
@@ -314,14 +344,30 @@ div#menu-header > svg {
   transform: translateY( 50% );
 }
 
+#frame > .drawer-form {
+  height: calc( 100 * var( --vh ) );
+  background: #FFF;
+}
+
 div#date-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+#display-ad {
+  flex: 0 1;
+}
+
+.display-ad {
+  padding: 3px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
 #today-plan {
-  flex: 1;
+/*   flex: 1; */
   position: relative;
   margin: 2px;
 }
@@ -356,7 +402,7 @@ div#date-wrapper {
   width: 2px;
   height: calc( 100% - ( 1em * 2 ) );
   border-radius: 1px;
-  background: #FFFFFF;
+  background: var( --active-font-color );
   z-index: 1;
 }
 
@@ -373,7 +419,7 @@ div#date-wrapper {
 }
 
 #plan-list {
-  flex: 2;
+  flex: 6;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -392,9 +438,10 @@ div#date-wrapper {
   margin: 2px;
   text-align: center;
   transition: background .2s ease;
+  overflow: hidden;
 }
 .plans:hover {
-  background: var( --clicked-active-bg-color );
+/*   background: var( --clicked-active-bg-color ); */
 }
 
 .have-plan {
@@ -828,6 +875,14 @@ div#share-wrapper > div#name-wrapper > div.share-name {
   background: var( --bg-color );
   box-sizing: border-box;
   flex-shrink: 0;
+  overflow: scroll;
+}
+div#share-wrapper > div#name-wrapper > div.share-name > div {
+/*   overflow: scroll; */
+}
+
+div#share-wrapper > div#name-wrapper > div.share-name.add-member{
+  overflow: hidden;
 }
 
 div.share-name.add-member:before, div.share-name.add-member:after {
@@ -842,6 +897,7 @@ div.share-name.add-member:before, div.share-name.add-member:after {
 /*   background: #3de44a; */
   z-index: 1;
 }
+
 div.share-name.add-member:after {
   transform: rotate( 90deg );
 }
@@ -869,6 +925,10 @@ div#share-list > div.share-date-wrapper > div.share-date {
   border: 1px solid transparent;
   background: var( --bg-color );
   box-sizing: border-box;
+  transition: background .2s ease;
+}
+div#share-list > div.share-date-wrapper > div.share-date.select-date {
+  background: #4285f455;
 }
 div#share-list > div.share-date-wrapper.add-member > div.share-date {
   background: var( --inactive-bg-color );
@@ -1041,6 +1101,40 @@ div#content-wrapper.share + div#footer:after {
   transform: translateX( 300% );
 }
 
+div#content-wrapper.month + div#footer > div#month-calendar > svg {
+  fill: var( --active-bg-color );
+}
+div#content-wrapper.week + div#footer > div#week-calendar > svg {
+  fill: var( --active-bg-color );
+}
+div#content-wrapper.list + div#footer > div#list-calendar > svg {
+  fill: var( --active-bg-color );
+}
+div#content-wrapper.share + div#footer > div#share-calendar > svg {
+  fill: var( --active-bg-color );
+}
+
+div#content-wrapper.month + div#footer > div#month-calendar > div{
+  color: var( --active-bg-color );
+}
+div#content-wrapper.week + div#footer > div#week-calendar > div{
+  color: var( --active-bg-color );
+}
+div#content-wrapper.list + div#footer > div#list-calendar > div{
+  color: var( --active-bg-color );
+}
+div#content-wrapper.share + div#footer > div#share-calendar > div{
+  color: var( --active-bg-color );
+}
+
+div#qrcode {
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+    width: auto;
+    max-width: 100%;
+}
+
 .svg-view {
   position: relative;
   top: -5px;
@@ -1087,10 +1181,15 @@ div#share {
   }
   
   ::-webkit-scrollbar {
-/*     display: none; */
+    display: none;
+    position: absolute;
+    float: left;
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, .5);
+    background-color: #777;
     border-radius: 10px
   }
 }

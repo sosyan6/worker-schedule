@@ -209,7 +209,7 @@ export class SetData {
       const icon = this.createIconElement( this.shiftType[shiftKeys[i]], shiftKeys[i] );
       // icon.setAttribute( 'count', i );
       
-      $( icon ).longpress( () => {
+      $( icon ).longpress( async() => {
         
         const drawer = document.querySelector( '#add-shift-drawer' );
         const addShift = document.querySelector( '#add-shift-form' );
@@ -228,12 +228,13 @@ export class SetData {
             else e.value = data[e.name];
           }
         } );
+        
+        const iconPreview = drawer.querySelector( '.edit-button > .icon-preview' );
+        iconPreview.querySelectorAll( '*' ).forEach( e => e.remove() );
+        iconPreview.appendChild( ( await setData ).createIconElement( {color: "#ff0000", sharp: "rect", initial: ""} ) );
+        
         addShift.querySelector( '.submit-button' ).style.display = 'none';
         addShift.querySelector( '.edit-button' ).style.display = 'flex';
-        
-        document.querySelectorAll( '.icon-preview' ).forEach( async icon => {
-          icon.querySelectorAll( '*' ).forEach( e => e.remove() );
-        } );
         
         drawer.dispatchEvent( new Event( 'open' ) );
       }, () => {}, 300 );

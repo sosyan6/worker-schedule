@@ -5,9 +5,15 @@
       /  groups.json
       /  GID.json
   / userInfo
-      /  SID.json
       /  Email.json
+      /  infos.json
   
+  
+  infos
+  
+  UID: SID
+  
+  UID = name + passwordのhash
   
   info.json
   {

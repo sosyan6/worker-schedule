@@ -5,19 +5,24 @@ const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const nodeMailer = require( 'nodemailer' );
 const app = express();
+const marked = require( 'marked' );
 
 const baseJSON = JSON.parse( fs.readFileSync( 'baseData.json', 'utf-8' ) );
 
 app.use( cookieParser() );
 app.use( bodyParser() );
 
-function genHash256( hash1, hash2 ){
+function genHash256( hash1 ){
   const nameHex = crypto.createHash('sha256').update( hash1, 'utf8').digest('hex');
-  const passHex = crypto.createHash('sha256').update( hash2, 'utf8').digest('hex');
-  return crypto.createHash('sha256').update( nameHex + passHex, 'utf8').digest('hex');
+  return crypto.createHash('sha256').update( nameHex, 'utf8').digest('hex');
 }
 
-function sendMail( sendAddress ){
+function randomHash(){
+  const random = crypto.randomBytes( 8 ).toString();
+  return crypto.createHash('sha256').update( random, 'utf8').digest('hex');
+}
+
+function sendMail( option ){
   const address = 'worker.schedule.server@gmail.com';
   const transporter = nodeMailer.createTransport(
   {
@@ -29,18 +34,10 @@ function sendMail( sendAddress ){
       pass: process.env.GMAIL_PASSWORD
     }
   } );
-  const mailOptions1 = {
-    from: `ワーカースケジュール<${address}>`,
-    to: sendAddress,
-    subject: '認証メール',
-    text: 
-    `
-    メールアドレスを認証しました。
-    心当たりのない場合はお手数ですが削除いただけると幸いです。
-    `
-  }
   
-  transporter.sendMail( mailOptions1, ( error, info ) => {
+  option.from = `ワーカースケジュール<${address}>`;
+  
+  transporter.sendMail( option, ( error, info ) => {
     if( error ){
       console.log(error);
     }else{
@@ -50,7 +47,12 @@ function sendMail( sendAddress ){
 }
 
 app.post( '/signup', ( req, res ) => {
-  const hashHex = genHash256( req.body.name, req.body.password );
+  const hashHex = randomHash();
+  
+  if( !fs.existsSync( `.data/userInfo/infos.json` ) ){
+    fs.writeFile( `.data/userInfo/infos.json`, '{}', err => console.log( err ) );
+  }
+  
   if( !fs.existsSync(`.data/user/${hashHex}.json`) && !fs.existsSync(`.data/userInfo/${req.body.email}.json`) ){
     
     //  ファイルがないなら作成して成功を返す
@@ -64,27 +66,41 @@ app.post( '/signup', ( req, res ) => {
       }
     } );
 
-    const userInfo = `{ SID: ${hashHex} }`;
-    fs.writeFile( `.data/userInfo/${req.body.email}.json`, JSON.stringify( userInfo ), err => {
+    const userInfo = { name: req.body.name, password : genHash256( req.body.password ) };
+    fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( userInfo ), err => {
       if( err ) {
         res.send( 'error' );
         res.end();
         return;
       }
     } );
-    fs.writeFile( `.data/userInfo/${hashHex}.json`, JSON.stringify( `{ email: ${req.body.email}, name: ${req.body.name}, password: ${req.body.password} }` ), err => {
-      if( err ) {
-        res.send('error');
-        res.end();
-        return;
-      }
-      //  maxAgeはmsで表すらしい
-      res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
-      res.send( 'login Success' );
-      res.end();
-      // sendMail( req.body.email );
-      return;
+    
+    fs.readFile( `.data/userInfo/infos.json`, 'utf-8', ( err, data ) => {
+      
+      const json = JSON.parse( data );
+      const GID = genHash256(req.body.name + genHash256( req.body.password ) );
+      json[GID] = { SID: hashHex };
+      json[req.body.email] = { SID: hashHex };
+      
+      fs.writeFile( `.data/userInfo/infos.json`, JSON.stringify( json ), err => {
     } );
+      
+    const mailOptions1 = {
+      to: req.body.email,
+      subject: '認証メール',
+      text: 
+      `
+      メールアドレスを認証しました。
+      心当たりのない場合はお手数ですが削除いただけると幸いです。
+      `
+    }
+    //  maxAgeはmsで表すらしい
+    res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
+    res.send( 'login Success' );
+    res.end();
+    sendMail( req.body.email );
+    return;
+  } );
     
   }else{
     res.send( 'Already User Exist or Already Email Exist' );
@@ -93,15 +109,104 @@ app.post( '/signup', ( req, res ) => {
 } );
 
 app.post( '/signin', ( req, res ) => {
-  const hashHex = genHash256( req.body.name, req.body.password );
-    
-  if( fs.existsSync(`.data/user/${hashHex}.json`) ){
-    res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
-    res.send( 'login Success' );  //  ファイルがあるなら成功を返す
-  }else{
-    res.send( 'not Exist' );
-  }
   
+  fs.readFile( `.data/userInfo/infos.json`, 'utf-8', ( err, data ) => {
+    const hashHex = genHash256( req.body.name + genHash256( req.body.password ) );
+    const json = JSON.parse( data );
+    if( json[req.body.name] )
+    {
+      res.cookie( 'SID', json[req.body.name].SID, { maxAge: 1000 * 3600 * 24 * 365 } );
+      res.send( 'login Success' );  //  ファイルがあるなら成功を返す
+    }
+    else if( json[hashHex] )
+    {
+      res.cookie( 'SID', json[hashHex].SID, { maxAge: 1000 * 3600 * 24 * 365 } );
+      res.send( 'login Success' );  //  ファイルがあるなら成功を返す
+    }else
+    {
+      res.send( 'not Exist' );
+    }
+  } );
+} );
+
+app.post( '/forget', ( req, res ) => {
+  fs.readFile( `.data/userInfo/infos.json`, 'utf-8', ( err, data ) => {
+    if( err ) return;
+    const userJson = JSON.parse( data );
+    if( userJson[req.body.email] ){
+      fs.readFile( `.data/userInfo/${userJson[req.body.email].SID}.json`, 'utf-8', ( err, d ) => {
+        if( err ){
+          console.log( err );
+          return;
+        } 
+        const json = JSON.parse( d );
+        const resetHash = randomHash();
+        const opt = {
+          to: req.body.email,
+          subject: 'パスワードの再設定',
+          text: 
+          `
+          あなたの表示名は ${json.name} です。
+          パスワードを変更したい場合は本日の24時までに以下のリンクから変更してください。
+          https://worker-schedule.glitch.me/change/${resetHash}
+
+          心当たりのない場合はお手数ですが削除いただけると幸いです。
+          `
+        }
+        sendMail( opt );
+
+        fs.writeFile( `.data/change/${resetHash}.json`, d, err => console.log( err ) );
+        res.send( '登録いただいたメールアドレス宛にメールを送信しました' );
+        
+      } );
+    }else{
+      res.send( '入力いただいたメールアドレスは登録されていませんでした' );
+    }
+  } );
+} );
+
+app.get( '/change/:Hash', ( req, res ) => {
+  if( !fs.existsSync( `.data/change/${req.params.Hash}.json` ) ){
+   res.send( 'urlの期限が切れています!' ); 
+  }else{
+    res.sendFile( `${__dirname}/views/reset.html` );
+  }
+} );
+
+app.post( '/reset', ( req, res ) => {
+  
+  const path = req.headers.referer.split( '/' );
+  if( fs.existsSync( `.data/change/${path[path.length -1]}.json` ) ){
+  
+    fs.readFile( `.data/change/${path[path.length -1]}.json`, 'utf-8', ( err, data ) => {
+    
+      const newDataJson = JSON.parse( data );
+      console.log( newDataJson );
+      const UID = genHash256( newDataJson.name + newDataJson.password );
+      newDataJson.password = genHash256( req.body.password );
+      const newUID = genHash256( newDataJson.name + newDataJson.password );
+      
+      fs.readFile( `.data/userInfo/infos.json`, 'utf-8', ( err, data ) => {
+        const infoJson = JSON.parse( data );
+        
+        if( infoJson[newUID] ){
+          res.send( '別のパスワードをお試しください' );
+          return;
+        }
+        
+        console.log( infoJson[UID] );
+        
+        infoJson[newUID] = infoJson[UID];
+        delete infoJson[UID];
+        fs.writeFile( `.data/userInfo/infos.json`, JSON.stringify( infoJson ), err => console.log( err ) );
+        fs.writeFile( `.data/userInfo/${infoJson[newUID].SID}.json`, JSON.stringify( newDataJson ), err => console.log( err ) );
+        fs.unlink( `.data/change/${path[path.length -1]}.json`, (err) => console.log( err ) );
+        res.send( '再設定しました' );
+      } );
+    } );
+  }else{
+    res.send( 'urlの期限が切れています' );
+  }
 } );
 
 app.post( '/savedata', ( req, res ) => {
@@ -118,7 +223,7 @@ app.post( '/savedata', ( req, res ) => {
 } );
 
 app.post( '/createGroup', ( req, res ) => {
-  const hash = genHash256( crypto.randomBytes( 8 ).toString(), crypto.randomBytes( 8 ).toString() );
+  const hash = randomHash();
   if( !fs.existsSync( `.data/group/${hash}.json` ) )
   {
     fs.writeFile( `.data/group/${hash}.json`, JSON.stringify( { groupInfo: { groupName: req.body.groupName }, users: [req.body.SID] } ), ( err ) => {
@@ -142,6 +247,7 @@ app.post( '/leaveGroup/:GID', ( req, res ) => {
     if( err ) res.send( err );
     const newJson = JSON.parse( data );
     newJson.users = newJson.users.filter( v => v !== req.cookies.SID );
+    console.log( newJson );
     fs.writeFile( `.data/group/${req.params.GID}.json`, JSON.stringify( newJson ), ( err ) => { if( err ) res.send( err ) } );
   } );
   res.send( 'グループから退出しました' );
@@ -261,8 +367,20 @@ app.post( '/getGroupName/:GID', ( req, res ) => {
   }
 } );
 
+app.get( /\.md$/, ( req, res ) => {
+  fs.readFile( `${ __dirname }/views/${ req.url }`, 'utf-8', ( err, data ) => {
+    if( err )
+    {
+      console.log( err );
+      res.status( 404 ).send( 'error' );
+      return;
+    }
+    console.log( data );
+    res.send( marked( data ) );
+  } );
+} );
+
 app.get( /\/.*/, ( req, res ) => {
-  console.log( req.url );
   if( req.url === '/' && req.cookies.SID ) res.sendFile( `${ __dirname }/views/index.html` );
   else if( req.url === '/' ) res.sendFile( `${ __dirname }/views/login.html` );
   else res.sendFile( `${ __dirname }/${ req.url }` );

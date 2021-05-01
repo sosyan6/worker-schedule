@@ -38,7 +38,7 @@ export class LeftMenu
   
   addSignOutEvent()
   {
-    const signout = document.querySelector( 'ul#signout' );
+    const signout = document.querySelector( 'div#signout' );
     
     signout.addEventListener( 'click', () => {
       if( signout.classList.contains( 'confirm' ) ){

@@ -13,17 +13,23 @@ export class Share
     
     this.groupData = streamData.then( async str => {
       const data = await str.ownData;
-      this.currentGroupNum = str.getCookies().groupNum ? str.getCookies().groupNum : 0;
-      if( data.data.group.length )
-        return await this.getGroupData( data.data.group[this.currentGroupNum] );
+      this.currentGroupNum = parseInt( str.getCookies().groupNum );
+      this.setScroll();
+      if( data.data.group.length && this.currentGroupNum !== -1 )
+        this.setShareCalendar( data.data.group[this.currentGroupNum] );
+      else{
+        const sdw = document.createElement( 'div' );
+        sdw.classList.add( 'share-date-wrapper' );
+        sdw.classList.add( 'add-member' );
+        document.querySelectorAll( '#this-month .date:not( .not-this-month )' ).forEach( () => {
+            const shareDate = document.createElement( 'div' );
+            shareDate.classList.add( 'share-date' );
+            sdw.appendChild( shareDate );
+        } );
+        this.shareList.appendChild( sdw );
+      }
     } );
     
-    this.groupData.then( data => {
-      if( data ){
-          this.generateShare( data );
-          this.setScroll( data );
-        }
-    } );
     
     this.setGroupSelect();
     this.editGroupButton();
@@ -35,91 +41,111 @@ export class Share
     const drawer = document.querySelector( '#group-operation' );
     
     document.querySelector( '#group-operation .edit' ).addEventListener( 'click', async() => {
-      const strData = await streamData;
-      const names = await this.groupNames;
-      const GID = names[currentGroupName.value].GID;
+      const s = await streamData;
+      const groupData = ( await s.ownData ).data.group;
+      const GID = groupData[currentGroupName.value];
       
-      this.getGroupData( GID ).then( ( data ) => {
-        this.generateShare( data );
-        this.setScroll( data );
-      } );
+      this.setShareCalendar( GID );
       
       drawer.dispatchEvent( new Event( 'close' ) );
-      
       document.cookie = `groupNum=${currentGroupName.value}; max-age=${60*60*24*365}`;
-      
     } );
     
     document.querySelector( '#group-operation .delete' ).addEventListener( 'click', async() => {
-      const number = (await streamData).getCookies().groupNum;
-      const names = await this.groupNames;
+      
       const s = await streamData;
-      console.log( names );
-      this.leaveGroup( names[currentGroupName.value].GID ).then( () => console.log( '????' ) );
-      ( await s.ownData ).data.group = ( await s.ownData ).data.group.filter( v => v !== names[currentGroupName.value].GID );
+      const number = getCookies().groupNum;
+      const names = await this.getGroupNames();
+      const groupData = ( await s.ownData ).data;
+      
+      this.leaveGroup( names[currentGroupName.value].GID );
+      groupData.group = groupData.group.filter( v => v !== names[currentGroupName.value].GID );
+      
       [...currentGroupName.querySelectorAll( 'option:not( [value="create-group"] )' )].find( v => v.value === currentGroupName.value ).remove();
+      [...currentGroupName.querySelectorAll( 'option:not( [value="create-group"] )' )].forEach( ( v, count ) => v.value = count );
+      
       currentGroupName.dispatchEvent( new Event( 'change' ) );
-      this.groupNames = names.filter( ( v, i ) => i !== currentGroupName.value );
-      if( number > 0 ) document.cookie = `groupNum=${number-1}; max-age=${60*60*24*365}`;
+      document.cookie = `groupNum=${groupData.group.length ? parseInt(currentGroupName.value) : -1}; max-age=${60*60*24*365}`;
       s.saveData();
     } );
     
     document.querySelector( '.add-member.share-name' ).addEventListener( 'click', async() => {
-      const names = (await this.groupNames);
+      const s = await streamData;
+      const names = await this.getGroupNames();
       const displayURL = document.querySelector( '#URL-drawer' );
-      const number = (await streamData).getCookies().groupNum;
-
-      if( !(await (await streamData).ownData ).data.group.length ){
+      const groupData = (await s.ownData ).data.group;
+      const number = parseInt( s.getCookies().groupNum ) === -1 ? 0 : parseInt( s.getCookies().groupNum );
+      
+      if( !groupData.length ){
         document.cookie = `groupNum=-1; max-age=${60*60*24*365}`;
         document.querySelector( '#group-operation' ).dispatchEvent( new Event( 'open' ) );
         return;
       }
-      displayURL.querySelector( 'input' ).value = `https://worker-schedule.glitch.me/join/${names[number].GID}`;
-      navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${names[number].GID}`);
+      displayURL.querySelector( 'input' ).value = `https://worker-schedule.glitch.me/join/${groupData[number]}`;
+      navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${groupData[number]}`);
       displayURL.dispatchEvent( new Event( 'open' ) );
+      $("#qrcode").html( '' );
+      $("#qrcode").qrcode( { text: unescape( encodeURIComponent( `https://worker-schedule.glitch.me/join/${ groupData[number] }`) ) } ); 
     } );
   }
     
   setGroupSelect()
   {
-    this.getGroupNames().then( names => {
-      this.groupNames = names;
-      if( !names ) return;
+    return new Promise( async resolve => {
+      
+      this.groupNames = await this.getGroupNames();
+      if( !this.groupNames ) return;
+      
       const groupSelector = document.querySelector( '#select-group' );
       groupSelector.querySelectorAll( 'option:not( [value="create-group"] )' ).forEach( e => e.remove() );
-      names.reverse().forEach( ( name, i ) => {
+      this.groupNames.reverse().forEach( ( name, i ) => {
+        
         const selectItem = document.createElement( 'option' );
-        selectItem.value = names.length - i - 1;
+        selectItem.value = this.groupNames.length - i - 1;
         selectItem.textContent = name.groupName;
         groupSelector.insertAdjacentElement( 'afterbegin', selectItem );
       } );
+      resolve( this.groupNames );
     } );
   }
   
-  setScroll( data )
+  setShareCalendar( GID )
   {
-    this.groupData = data;
+    this.getGroupData( GID ).then( ( data ) => {
+      this.groupData = data;
+      this.generateShare();
+    } )
+  }
+  
+  setScroll()
+  {
     document.querySelector( '#calendar' ).removeEventListener( 'onScroll', this.generateShare );
     document.querySelector( '#calendar' ).addEventListener( 'onScroll', this.generateShare );
   }
   
   async generateShare()
   {
-    if( !( await this.groupData ) ) return;
+      console.log( this.shareList.querySelectorAll( ':scope > .add-member' ) );
     
-    if( !document.querySelector( '.share-date-wrapper.add-member' ) ){
-      const sdw = document.createElement( 'div' );
-      sdw.classList.add( 'share-date-wrapper' );
-      sdw.classList.add( 'add-member' );
-      document.querySelectorAll( '#this-month .date:not( .not-this-month )' ).forEach( () => {
-          const shareDate = document.createElement( 'div' );
-          shareDate.classList.add( 'share-date' );
-          sdw.appendChild( shareDate );
-      } );
-      this.shareList.appendChild( sdw );
+    this.shareList.querySelectorAll( ':scope > .add-member' ).forEach( e => e.remove() );
+    // this.nameWrapper.querySelectorAll( ':scope > :not( .add-member )' ).forEach( e => e.remove() );
+    
+    const sdw = document.createElement( 'div' );
+    sdw.classList.add( 'share-date-wrapper' );
+    sdw.classList.add( 'add-member' );
+    console.log( ( await calendar ).currentDate );
+    for( let i = 0; i < new Date( ( await calendar ).currentDate.getFullYear(), ( await calendar ).currentDate.getMonth() + 1 , 0 ).getDate(); i++ ){
+      console.log( i );
+        const shareDate = document.createElement( 'div' );
+        shareDate.classList.add( 'share-date' );
+        sdw.appendChild( shareDate ); 
+    }
+    this.shareList.appendChild( sdw );
+    
+    if( !( await this.groupData ) ){
+      return;
     }
     
-    console.log( await this.groupData );
     [...( await this.groupData )].reverse().forEach( async user => {
       
       this.shareList.querySelectorAll( ':scope > :not( .add-member )' ).forEach( e => e.remove() );
@@ -130,10 +156,13 @@ export class Share
       if( user.userName === myData.userName ) return;
       
       const shareName = document.createElement( 'div' );
+      const div = document.createElement( 'div' );
       const shareDateWrapper = document.createElement( 'div' );
       shareDateWrapper.classList.add( 'share-date-wrapper' );
       shareName.classList.add( 'share-name' );
-      shareName.textContent = user.userName;
+      div.textContent = user.userName;
+      
+      shareName.appendChild( div );
       
       this.nameWrapper.insertAdjacentElement( 'afterbegin', shareName );
 
@@ -142,6 +171,9 @@ export class Share
         const currentDate = getDateFromDateElement( v );
         
         const shareDate = document.createElement( 'div' );
+        if( v.classList.contains( 'select-date' ) )
+          shareDate.classList.add( 'select-date' );
+          
         shareDate.classList.add( 'share-date' );
         
         if( shift && shift[currentDate.format('YYYY/MM')] && shift[currentDate.format('YYYY/MM')][currentDate.format('DD')] && shift[currentDate.format('YYYY/MM')][currentDate.format('DD')].shiftName ){
@@ -175,7 +207,6 @@ export class Share
   }
   
   getGroupNames(){
-    console.log( 1 );
     return new Promise( async resolve => {
       const str = await streamData;
       const data = await str.ownData;

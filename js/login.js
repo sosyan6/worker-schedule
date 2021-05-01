@@ -13,7 +13,7 @@ window.onload = () => {
         const inputs = [...target.querySelectorAll( 'input' )];
         inputs.map( v => loginInfo[v.name] = v.value );
 
-        if( Object.values( loginInfo ).every( v => v ) && ( i || document.querySelector( 'input[name="email"]' ).value.match( /^\S+?@\S+$/ ) ) ){
+        if( Object.values( loginInfo ).every( v => v ) && ( i || document.querySelector( 'input[name="email"]' ).value.match( /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ ) ) ){
           reverse.querySelector( '.button-text' ).classList.add( 'loading' );
           if( i ){  // Signin
             $.post( 'signin', loginInfo )
@@ -42,7 +42,7 @@ window.onload = () => {
           inputs.forEach( v => {
             //  未入力あったとき
             if( !v.value ) v.style.border = '3px double red';
-            if( v.name === 'email' && !v.value.match( /^\S+?@\S+$/ ) ) v.style.border = '3px double red';
+            if( v.name === 'email' && !v.value.match( /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ ) ) v.style.border = '3px double red';
           } );
           reverse.style.animation = 'button-anim .6s ease';
           setTimeout( () => {
