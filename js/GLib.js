@@ -1,13 +1,6 @@
 Date.prototype.format = function( format ){
   return format
-	.replace( /dd/, this.getDay() )
-	.replace( /0/, '日' )
-	.replace( /1/, '月' )
-	.replace( /2/, '火' )
-	.replace( /3/, '水' )
-	.replace( /4/, '木' )
-	.replace( /5/, '金' )
-	.replace( /6/, '土' )
+	.replace( /dd/, ['日', '月', '火', '水', '木', '金', '土'][this.getDay()] )
 	.replace( /YYYY/, this.getFullYear() )
 	.replace( /MM/, `${ this.getMonth() + 1 }`.padStart( 2, 0 ) )
 	.replace( /DD/, `${ this.getDate() }`.padStart( 2, 0 ) )

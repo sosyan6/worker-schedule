@@ -25,8 +25,16 @@ export class ButtonRegister
       const frame = document.querySelector( '#frame' );
       frame.dispatchEvent( new Event( 'open' ) );
       frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/forget.html' );
-      
-      // document.querySelector( '#menu' ).dispatchEvent( new Event( 'close' ) );
+    } );
+    document.querySelector( 'li#release-note' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/release.html' );
+    } );
+    document.querySelector( 'li#how-to-use' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/howtouse.html' );
     } );
     
     document.querySelector( 'li#about' ).addEventListener( 'click', () => {
@@ -108,9 +116,11 @@ export class ButtonRegister
       strData.createGroup( groupInfo ).then( async GID => {
         const number = getCookies().groupNum;
         document.cookie = `groupNum=${groupData.length-1}; max-age=${60*60*24*365}`;
+        $("#qrcode").html( '' );
+        $("#qrcode").qrcode( { text: unescape( encodeURIComponent( `https://www.worker-schedule.com/join/${ groupData[number] }`) ) } ); 
         this.addGroup.parentElement.dispatchEvent( new Event( 'close' ) );
-        displayURL.querySelector( 'input' ).value = `https://worker-schedule.glitch.me/join/${GID}`;
-        navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${GID}`);
+        displayURL.querySelector( 'input' ).value = `https://www.worker-schedule.com/join/${GID}`;
+        navigator.clipboard.writeText(`https://www.worker-schedule.com/join/${GID}`);
         displayURL.parentElement.dispatchEvent( new Event( 'open' ) );
         (await share).setGroupSelect();
         (await share).setShareCalendar( GID );
@@ -232,7 +242,7 @@ export class ButtonRegister
     planForm.querySelector( '.edit-button > .edit' ).addEventListener( 'click', async() =>
     {
       const date = getDateFromDateElement( document.querySelector( '.select-date' ) );
-      const dayShift = ( await setData ).getDayShift( date );
+      const dayShift = await ( await setData ).getDayShift( date );
       const currentEdit = document.querySelector( '.current-edit' );
       const data = dayShift.schedule[parseInt( currentEdit.getAttribute( 'count' ) )];
       
@@ -249,7 +259,7 @@ export class ButtonRegister
     {
       const date = getDateFromDateElement( document.querySelector( '.select-date' ) );
       const currentEdit = document.querySelector( '.current-edit' );
-      const dayShift = ( await setData ).getDayShift( date );
+      const dayShift = await ( await setData ).getDayShift( date );
       
       dayShift.schedule = dayShift.schedule.filter( ( v, count ) => count !== parseInt( currentEdit.getAttribute( 'count' ) ) );
       
@@ -266,7 +276,7 @@ export class ButtonRegister
     const parentButton = document.querySelector( '#add-shift-form' );
     
     const closeEvent = async() => {
-      ( await calendar ).initDisplayDate();
+      ( await calendar ).createCurrentCalendar();
       ( await setData ).setShiftTypeSelect();
       document.querySelector( '#add-shift-drawer' ).dispatchEvent( new Event( 'close' ) );
     }

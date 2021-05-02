@@ -8,14 +8,14 @@ const selectMode = import( './SelectMode.js' ).then( m => new m.SelectMode() );
 const buttonRegister = import( './ButtonRegister.js' ).then( m => new m.ButtonRegister() );
 const share = import( './Share.js' ).then( m => new m.Share() );
 
-// window.onload = () => {
-//   Promise.allSettled( [calendar ,drawerMenu ,leftMenu ,streamData ,setData ,footer ,selectMode ,buttonRegister ,share] ).then( ( result ) => {
-//     result.forEach( ( val ) => { if( val.status === 'rejected' ) location.reload(); } );
-//   } );
-//   document.addEventListener( 'touchstart', ( e ) => {
-//     if( e.touches.length >= 2 ) e.preventDefault();
-//   }, { passive: false } );
-// };
+window.onload = () => {
+  Promise.allSettled( [calendar ,drawerMenu ,leftMenu ,streamData ,setData ,footer ,selectMode ,buttonRegister ,share] ).then( ( result ) => {
+    result.forEach( ( val ) => { if( val.status === 'rejected' ) location.reload(); } );
+  } );
+  document.addEventListener( 'touchstart', ( e ) => {
+    if( e.touches.length >= 2 ) e.preventDefault();
+  }, { passive: false } );
+};
 
 function getSelectDayNum()
 {
@@ -48,10 +48,10 @@ function getDateFromDateElement( element )
   switch( element.parentNode.parentNode.id ){
     case 'prev-month':
       date.setMonth( date.getMonth() - 1 );
-    return;
+    break;
     case 'next-month':
       date.setMonth( date.getMonth() + 1 );
-    return;
+    break;
   }
   
   if( element.classList.contains( 'not-this-month' ) ){
@@ -61,7 +61,6 @@ function getDateFromDateElement( element )
       date.setMonth( date.getMonth() + 1 );
     }
   }
-  
   date.setDate( element.textContent.match( /^\d+/ ) );
   
   return date;

@@ -3,19 +3,16 @@ export class Calendar
   constructor()
   {
     this.baseDate = new Date();
+    this.selectDate = new Date( this.baseDate );
     this.currentDate = new Date( this.baseDate );
-    this.generateCalendar();
+    
     this.initCalendar();
-    this.setCurrentDate();
-    this.setIndexDate();
-    this.initDisplayDate();
   }
   
   generateCalendar()
   {
     const calendar = document.querySelector( 'div#calendar' );
-    // カレンダー部分を動的に生成する
-    calendar.querySelectorAll( ':scope > div' ).forEach( async ( m ) => {
+    calendar.querySelectorAll( ':scope > div' ).forEach( m => {
       const week = document.createElement( 'div' );
       week.classList.add( 'week' );
 
@@ -28,10 +25,9 @@ export class Calendar
         `<svg x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve">
           <g>
             <polygon class="st0" points="440.469,73.413 218.357,295.525 71.531,148.709 0,220.229 146.826,367.055 218.357,438.587 
-              289.878,367.055 512,144.945 	" style="fill: #FFF;"></polygon>
+              289.878,367.055 512,144.945"></polygon>
           </g>
-        </svg>`;
-      
+        </svg>`;      
       date.appendChild( checkBox );
 
       const weekFragment = new DocumentFragment();
@@ -45,30 +41,27 @@ export class Calendar
       }
       m.append( monthFragment );
     } );
-    
-    document.querySelectorAll( '.date' ).forEach( date => {
-      date.addEventListener( 'click', () => {
-        if( document.querySelector( 'div#header' ).classList.contains( 'select-mode' ) || date.classList.contains( 'not-this-month' ) ) return;
-        if( date.classList.contains( 'select-date' ) ){
-          document.querySelector( 'div#shift-type' ).dispatchEvent( new Event( 'open' ) );
-        }else{
-          this.setSelectDate( getDateFromDateElement( date ), date );
-          this.currentDate = getDateFromDateElement( date );
-        }
-      } );
-    } );
   }
   
   initCalendar()
   {
-    const calendar = document.querySelector( 'div#calendar' );
+    this.generateCalendar();
+    this.setIndexDate();
+    this.createCurrentCalendar();
+    // this.setSelectDate( document.querySelector( 'div.date.today' ) );
     
-    //カレンダーのスクロールを捕捉
+    const calendar = document.querySelector( 'div#calendar' );
+    calendar.scrollTo( calendar.scrollWidth * Math.floor( calendar.children.length / 2 ) / calendar.children.length, 0 );
+    
+    document.querySelector( 'input#date' ).addEventListener( 'change', ( e ) => {
+      const value = e.target.value.split( '-' ).map( v => Number( v ) );
+      this.setCurrentMonth( { year: value[0], month: value[1] - 1 } );
+    } );
+    
     calendar.addEventListener( 'scroll', ( e ) => {
       if( calendar.scrollLeft <= 0 ){  // スクロール位置が左端なら
         e.preventDefault();
         calendar.dispatchEvent( new Event( 'onScroll' ) );
-        document.querySelectorAll( '.date' ).forEach( e => e.removeAttribute( 'style' ) );
         this.setCurrentMonth( { direction: -1 } );  // 月を1つ戻す
         calendar.scrollTo( calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
         document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
@@ -76,7 +69,6 @@ export class Calendar
       }else if( calendar.scrollLeft >= calendar.offsetWidth * 2 - 1 ){  // スクロール位置が右端なら
         e.preventDefault();
         calendar.dispatchEvent( new Event( 'onScroll' ) );
-        document.querySelectorAll( '.date' ).forEach( e => e.removeAttribute( 'style' ) );
         this.setCurrentMonth( { direction: 1 } );  // 月を1つ進める
         calendar.scrollTo( calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
         document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
@@ -88,119 +80,99 @@ export class Calendar
         // 見かけ上でのみ年月を変更
         document.querySelector( 'input#date' ).value = ( new Date( this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1 ) ).format( 'YYYY-MM' );
       }else{  // スクロール位置が中央（デフォルト）なら
-        // 見かけ上の年月の変更を戻す
-        // document.querySelector( 'div#date' ).innerHTML = `${ this.currentDate.getFullYear() }年${ this.currentDate.getMonth() + 1 }月`
       }
     } );
     
     const thisMonth = document.querySelector( 'div#this-month' );
-
-    // カレンダーを中央にスクロール
-    calendar.scrollTo( calendar.scrollWidth * Math.floor( calendar.children.length / 2 ) / calendar.children.length, 0 );
-
-    document.querySelector( 'input#date' ).addEventListener( 'change', ( e ) => {
-      const value = e.target.value.split( '-' ).map( v => Number( v ) );
-      this.setCurrentMonth( { year: value[0], month: value[1] - 1 } );
-    } );
-
-    const shareList = document.querySelector( 'div#share-list' );
-    
     document.querySelector( 'div#prev-month-button' ).addEventListener( 'click', () => {
-      document.querySelectorAll( '.date' ).forEach( e => e.style.background = 'var( --bg-color )' );
-      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
+      document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
       calendar.scrollBy( { top: 0, left: -thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
     document.querySelector( 'div#next-month-button' ).addEventListener( 'click', () => {
-      document.querySelectorAll( '.date' ).forEach( e => e.style.background = 'var( --bg-color )' );
-      document.querySelectorAll( '.not-this-month' ).forEach( e => e.style.opacity = '1' );
+      document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
       calendar.scrollBy( { top: 0, left: thisMonth.offsetWidth, behavior: 'smooth'  } );
     } );
+    
+    document.querySelectorAll( 'div.date' ).forEach( date => {
+      date.addEventListener( 'click', () => {
+        if( document.querySelector( 'div#header' ).classList.contains( 'select-mode' ) || date.classList.contains( 'not-this-month' ) ) return;
+        if( date.classList.contains( 'select-date' ) ){
+          document.querySelector( 'div#shift-type' ).dispatchEvent( new Event( 'open' ) );
+        }else{
+          this.setSelectDate( date );
+          this.setPlan( getDateFromDateElement( date ) );
+        }
+      } );
+    } );
   }
-  
-  initDisplayDate()
+
+  createCurrentCalendar()
   {
-    const monthNode = document.querySelectorAll( 'div#calendar > div' );
-    monthNode.forEach( async( monthElement, m ) => {
-      const tempDate = new Date( this.currentDate );
-      m -= Math.floor( monthNode.length / 2 );
-      tempDate.setMonth( this.currentDate.getMonth() + m );
-      this.optimizeDate( tempDate );
-      this.createMonth( monthElement, new Date( tempDate ) );
-      // (await setData).setShiftTypeDate( monthElement, new Date( tempDate ) );
+    const monthNodes = document.querySelectorAll( 'div#calendar > div' );
+    monthNodes.forEach( ( month, m ) => {
+      const monthDate = new Date( this.currentDate );
+      monthDate.setDate( 1 );
+      monthDate.setMonth( this.currentDate.getMonth() + m - Math.floor( monthNodes.length / 2 ) );
+      this.createMonth( month, monthDate );
     } );
   }
   
-  optimizeDate( dateClass )
+  createMonth( element, monthDate )
   {
-    dateClass.setDate( 1 );
-    dateClass.setDate( -dateClass.getDay() + 1 );
-  }
-  
-  loopMonth( monthElement, func )
-  {
-    monthElement.querySelectorAll( '.week' ).forEach( ( week, w ) => {
-      week.querySelectorAll( '.date' ).forEach( ( date, d ) => func( { 'month': monthElement, 'week': week, 'w': w, 'date': date, 'd': d } ) );
-    } );
-  }
-  
-  createMonth( element, creatingDate )
-  {
-    this.loopMonth( element, ( data ) => 
-    {
-      data.date.innerHTML = data.date.innerHTML.replace( /^\d*(<div class="day">\n.<\/div>)*/, creatingDate.format( `DD<div class = 'day'>\ndd</div>` ) );
+    const creatingDate = new Date( monthDate );
+    creatingDate.setDate( -creatingDate.getDay() + 1 );
+    
+    element.querySelectorAll( 'div.date' ).forEach( date => {
+      date.innerHTML = date.innerHTML.replace( /^\d*(<div class="day">\n.<\/div>)*/, creatingDate.format( `DD<div class = 'day'>\ndd</div>` ) );
       
-       // addEventListener内だとcreatingDateの値がおかしくなるので、ここでその時のループの値を保存しておく。
+      if( creatingDate.format( 'YYYY/MM' ) === monthDate.format( 'YYYY/MM' ) ){
+        if( creatingDate.format( 'YYYY/MM/DD' ) === this.baseDate.format( 'YYYY/MM/DD' ) ){
+          date.classList.add( 'today' );
+          if( creatingDate.format( 'YYYY/MM' ) === this.currentDate.format( 'YYYY/MM' ) ){
+            this.setSelectDate( date );
+            this.setPlan( getDateFromDateElement( date ) );
+          }
+        }else if( creatingDate.format( 'YYYY/MM/DD' ) === this.currentDate.format( 'YYYY/MM/DD' ) ){
+          console.log( this.currentDate );
+          this.setSelectDate( date );
+          this.setPlan( getDateFromDateElement( date ) );
+        }
+      }else{
+        date.classList.add( 'not-this-month' );
+      }
+      
       const savedDate = new Date( creatingDate );
-      
-      // console.log( data.date );
-      if( this.baseDate.format( 'YYYY/MM/DD' ) === creatingDate.format( 'YYYY/MM/DD' ) ){
-        if( data.month.id === 'this-month' && !data.date.classList.contains( 'not-this-month' ) ){
-          this.setSelectDate( savedDate, data.date );
-        }
-        data.date.classList.add( 'today' );
-      }else{
-        if( data.month.id === 'this-month' && creatingDate.format( 'YYYY/MM/DD' ) === `${ this.currentDate.format( 'YYYY/MM/' ) }01` ){
-          this.setSelectDate( savedDate, data.date );
-        }
-        if( data.date.classList.contains( 'today' ) ){
-          data.date.classList.remove( 'today' );
-        }
-      }
-      
-      if( this.currentDate.format( 'YYYY/MM' ) === creatingDate.format( 'YYYY/MM' ) ){
-        data.date.classList.remove( 'not-this-month' );
-      }else{
-        data.date.classList.add( 'not-this-month' );
-      }
-      
       setData.then( s => {
-        s.createShiftTypeDate( savedDate, data.date );
+        s.createShiftTypeDate( savedDate, date );
       } );
       
       creatingDate.setDate( creatingDate.getDate() + 1 );
     } );
   }
-  async setSelectDate( date, element )
+  
+  setSelectDate( date )
   {
-    document.querySelectorAll( '.select-date' ).forEach( ( q ) => q.classList.remove( 'select-date' ) );
-    element.classList.add( 'select-date' );
+    document.querySelectorAll( '.select-date' ).forEach( v => v.classList.remove( 'select-date' ) );
+    
     document.querySelectorAll( '#share-list .share-date-wrapper:not( .add-member )' ).forEach( v => {
-      v.querySelectorAll( '.share-date' )[[...document.querySelectorAll( '#this-month .date:not( .not-this-month )' )].indexOf( element )]?.classList.add( 'select-date' );
+      v.querySelectorAll( '.share-date' )[[...document.querySelectorAll( '#this-month .date:not( .not-this-month )' )].indexOf( date )]?.classList.add( 'select-date' );
     } );
-    this.setCurrentDate( date );
-    this.setPlan( date );
+    
+    this.selectDate = getDateFromDateElement( date );
+    date.classList.add( 'select-date' );
+    document.querySelector( 'div#today-view' ).innerText = this.selectDate.format( 'MM/DD(dd)' );
   }
   
   async setPlan( date )
   {
-    document.querySelectorAll( '.plans' ).forEach( e => e.remove() );
+    document.querySelectorAll( '.plans' ).forEach( v => v.remove() );
     
     const planForm = document.querySelector( '#add-plan-form' );
-    const dayShift = ( await setData ).getDayShift( date );
-    if( !dayShift || !dayShift.hasOwnProperty( 'schedule' ) ) return;
+    const dayShift = await ( await setData ).getDayShift( date );
+    if( !dayShift?.hasOwnProperty( 'schedule' ) ) return;
 
     dayShift.schedule.forEach( ( v, count ) =>
-    {  
+    {
       const planDiv = document.createElement( 'div' );
       const memoDiv = document.createElement( 'div' );
       memoDiv.textContent = v.scheduleMemo;
@@ -208,7 +180,7 @@ export class Calendar
       planDiv.appendChild( memoDiv );
       planDiv.setAttribute( 'count', count );
       
-      $( planDiv ).longpress( async() => {
+      $( planDiv ).longpress( () => {
         planDiv.classList.add( 'current-edit' );
         document.querySelector( '#add-plan-drawer' ).dispatchEvent( new Event( 'open' ) );
         planForm.querySelectorAll( 'div > *' ).forEach( e => {
@@ -218,7 +190,7 @@ export class Calendar
         planForm.querySelector( '.submit-button' ).style.display = 'none';
         planForm.querySelector( '.edit-button' ).style.display = 'flex';
         
-      } , () => {}, 300 );
+      } ,() => {}, 300 );
       
       document.querySelector( '#plan-list' ).appendChild( planDiv );
     } );
@@ -227,7 +199,7 @@ export class Calendar
   
   setCurrentMonth( option = {} )
   {
-    document.querySelectorAll( '.have-plan' ).forEach( e => e.remove() );
+    document.querySelectorAll( '.have-plan' ).forEach( v => v.remove() );
     this.currentDate.setDate( 1 );
     if( option.direction ){
       this.currentDate.setMonth( this.currentDate.getMonth() + option.direction );
@@ -235,19 +207,12 @@ export class Calendar
       this.currentDate.setYear( option.year || this.baseDate.getFullYear() );
       this.currentDate.setMonth( option.month || this.baseDate.getMonth() );
     }
-    this.setCurrentDate( this.currentDate );
-    this.initDisplayDate();
+    this.createCurrentCalendar();
     this.setIndexDate();
-  }
-  
-  setCurrentDate( date = this.baseDate )
-  {
-    document.querySelector( 'div#today-view' ).innerText = date.format( 'MM/DD(dd)' );
   }
   
   setIndexDate()
   {
     document.querySelector( 'input#date' ).value = this.currentDate.format( 'YYYY-MM' );
   }
-  
 }

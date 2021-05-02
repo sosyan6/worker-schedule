@@ -1006,6 +1006,9 @@ div.check-box {
 	transition:	all 0.2s ease;
   box-shadow: inset 0px 0px 0px 1px var( --bg-color );
 }
+div.check-box > svg{
+  fill: var( --active-font-color );
+}
 
 .not-this-month .check-box {
   display: none;

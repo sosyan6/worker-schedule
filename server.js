@@ -46,6 +46,11 @@ function sendMail( option ){
   } );
 }
 
+app.use( ( req, res, next ) => {
+  res.set( 'Cache-control', 'no-store' );
+  next();
+} );
+
 app.post( '/signup', ( req, res ) => {
   const hashHex = randomHash();
   
@@ -85,7 +90,7 @@ app.post( '/signup', ( req, res ) => {
       fs.writeFile( `.data/userInfo/infos.json`, JSON.stringify( json ), err => {
     } );
       
-    const mailOptions1 = {
+    const opt = {
       to: req.body.email,
       subject: '認証メール',
       text: 
@@ -98,7 +103,7 @@ app.post( '/signup', ( req, res ) => {
     res.cookie( 'SID', hashHex, { maxAge: 1000 * 3600 * 24 * 365 } );
     res.send( 'login Success' );
     res.end();
-    sendMail( req.body.email );
+    sendMail( opt );
     return;
   } );
     
@@ -148,14 +153,14 @@ app.post( '/forget', ( req, res ) => {
           `
           あなたの表示名は ${json.name} です。
           パスワードを変更したい場合は本日の24時までに以下のリンクから変更してください。
-          https://worker-schedule.glitch.me/change/${resetHash}
+          https://www.worker-schedule.com/change/${resetHash}
 
           心当たりのない場合はお手数ですが削除いただけると幸いです。
           `
         }
         sendMail( opt );
 
-        fs.writeFile( `.data/change/${resetHash}.json`, d, err => console.log( err ) );
+        fs.writeFile( `.data/change/${resetHash}.json`, d, err => { if( err ) console.log( err ) } );
         res.send( '登録いただいたメールアドレス宛にメールを送信しました' );
         
       } );
@@ -254,46 +259,44 @@ app.post( '/leaveGroup/:GID', ( req, res ) => {
 } );
 
 app.get( '/join/:GID', ( req, res ) => {
-  if( !req.params.GID ){
-    res.send( '不正なURLです' );
-    return;
-  }
-  if( !req.cookies.SID ){
-    res.send( 'ログインしてから再試行してください' );
-    return;
-  }
-  if( fs.existsSync( `.data/user/${req.cookies.SID}.json` ) &&
-      fs.existsSync( `.data/group/${req.params.GID}.json` ) )
-  {
-    fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) =>
+  fs.readFile( 'views/join.html', 'utf-8', ( err, join ) => {
+    if( !req.params.GID || !fs.existsSync( `.data/group/${req.params.GID}.json` ) ){
+      // 
+      res.send( join.replace( /参加 \|/g, '無効な招待 | ' ).replace( /message/, 'グループが見つかりませんでした' ) );
+      return;
+    }
+    if( !req.cookies.SID ){
+      res.send( join.replace( /message/, 'ログインしてから再試行してください' ) );
+      return;
+    }
+    if( fs.existsSync( `.data/user/${req.cookies.SID}.json` ) )
     {
-      const newJson = JSON.parse( data );
-      console.log( newJson.users );
-      if( !newJson.users.includes( req.cookies.SID ) ) newJson.users.push( req.cookies.SID );
-      fs.writeFile( `.data/group/${req.params.GID}.json`, JSON.stringify( newJson ), err => {
-        if( err ) res.send( 'error' );
+      fs.readFile( `.data/group/${req.params.GID}.json`, 'utf-8', ( err, data ) =>
+      {
+        const newJson = JSON.parse( data );
+        console.log( newJson.users );
+        if( !newJson.users.includes( req.cookies.SID ) ) newJson.users.push( req.cookies.SID );
+        fs.writeFile( `.data/group/${req.params.GID}.json`, JSON.stringify( newJson ), err => {
+          if( err ) res.send( 'error' );
+        } );
       } );
-    } );
-    
-    fs.readFile( `.data/user/${req.cookies.SID}.json`, 'utf-8', ( err, data ) => {
-      const newJson = JSON.parse( data );
-      if( !newJson.data.group.includes( req.params.GID ) )newJson.data.group.push( req.params.GID );
-      console.log( newJson );
-      fs.writeFile( `.data/user/${req.cookies.SID}.json`, JSON.stringify( newJson ), err => {
-        if( err ) res.send( 'error' );
+
+      fs.readFile( `.data/user/${req.cookies.SID}.json`, 'utf-8', ( err, data ) => {
+        const newJson = JSON.parse( data );
+        if( !newJson.data.group.includes( req.params.GID ) )newJson.data.group.push( req.params.GID );
+        console.log( newJson );
+        fs.writeFile( `.data/user/${req.cookies.SID}.json`, JSON.stringify( newJson ), err => {
+          if( err ) res.send( 'error' );
+        } );
       } );
-    } );
-    
-    console.log( 'グループに参加しました' );
-    // res.sendFile( `${ __dirname }/views/index.html` );
-    res.writeHead( 301, { Location: '/' } );
-    res.end();
-    return;
-    
-  }else{
-    res.send( 'グループが見つかりませんでした' );
-    return;
-  }
+
+      console.log( 'グループに参加しました' );
+      // res.sendFile( `${ __dirname }/views/index.html` );
+      res.writeHead( 301, { Location: '/' } );
+      res.end();
+      return;
+    }
+  } );
 } );
 
 app.post( /^\/getdata(\?.*)?$/, ( req, res ) => {
@@ -388,6 +391,47 @@ app.get( /\/.*/, ( req, res ) => {
 
 const listener = app.listen(process.env.PORT, () => {
   console.log("Your app is listening on port " + listener.address().port);
+  
+  let preTime = new Date();
+  preTime.setHours( preTime.getHours() + 9 );
+  
+  setInterval( () => {
+    const date = new Date();
+    date.setHours( date.getHours() + 9 );
+    if( preTime.format( 'DD' ) !== date.format( 'DD' ) ){
+      
+      preTime = date;
+      
+      fs.readdir( '.data/change', ( err, files ) => {
+        if( err ) throw err;
+        
+        files.forEach( file => {
+          fs.unlink( `.data/change/${file}`, ( err ) => {
+            if( err ) throw err;
+          } );
+        } );
+        
+        console.log( '一時ファイルを削除しました' );
+      } );
+    }
+  }, 1000 );
 });
 
-// 打倒スピカ！
+Date.prototype.format = function( format ){
+  return format
+	.replace( /dd/, this.getDay() )
+	.replace( /0/, '日' )
+	.replace( /1/, '月' )
+	.replace( /2/, '火' )
+	.replace( /3/, '水' )
+	.replace( /4/, '木' )
+	.replace( /5/, '金' )
+	.replace( /6/, '土' )
+	.replace( /YYYY/, this.getFullYear() )
+	.replace( /MM/, `${ this.getMonth() + 1 }`.padStart( 2, 0 ) )
+	.replace( /DD/, `${ this.getDate() }`.padStart( 2, 0 ) )
+	.replace( /HH/, `${ this.getHours() }`.padStart( 2, 0 ) )
+	.replace( /mm/, `${ this.getMinutes() }`.padStart( 2, 0 ) )
+	.replace( /SS/, `${ this.getSeconds() }`.padStart( 2, 0 ) )
+	.replace( /DATE/, this );
+};

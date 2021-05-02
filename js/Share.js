@@ -10,6 +10,15 @@ export class Share
     
     this.generateShare = this.generateShare.bind( this );
     
+    const sdw = document.createElement( 'div' );
+    sdw.classList.add( 'share-date-wrapper' );
+    sdw.classList.add( 'add-member' );
+    document.querySelectorAll( '#this-month .date:not( .not-this-month )' ).forEach( () => {
+        const shareDate = document.createElement( 'div' );
+        shareDate.classList.add( 'share-date' );
+        sdw.appendChild( shareDate );
+    } );
+    this.shareList.appendChild( sdw );
     
     this.groupData = streamData.then( async str => {
       const data = await str.ownData;
@@ -18,18 +27,8 @@ export class Share
       if( data.data.group.length && this.currentGroupNum !== -1 )
         this.setShareCalendar( data.data.group[this.currentGroupNum] );
       else{
-        const sdw = document.createElement( 'div' );
-        sdw.classList.add( 'share-date-wrapper' );
-        sdw.classList.add( 'add-member' );
-        document.querySelectorAll( '#this-month .date:not( .not-this-month )' ).forEach( () => {
-            const shareDate = document.createElement( 'div' );
-            shareDate.classList.add( 'share-date' );
-            sdw.appendChild( shareDate );
-        } );
-        this.shareList.appendChild( sdw );
       }
     } );
-    
     
     this.setGroupSelect();
     this.editGroupButton();
@@ -81,11 +80,11 @@ export class Share
         document.querySelector( '#group-operation' ).dispatchEvent( new Event( 'open' ) );
         return;
       }
-      displayURL.querySelector( 'input' ).value = `https://worker-schedule.glitch.me/join/${groupData[number]}`;
-      navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${groupData[number]}`);
+      displayURL.querySelector( 'input' ).value = `https://www.worker-schedule.com/join/${groupData[number]}`;
+      navigator.clipboard.writeText(`https://www.worker-schedule.com/join/${groupData[number]}`);
       displayURL.dispatchEvent( new Event( 'open' ) );
       $("#qrcode").html( '' );
-      $("#qrcode").qrcode( { text: unescape( encodeURIComponent( `https://worker-schedule.glitch.me/join/${ groupData[number] }`) ) } ); 
+      $("#qrcode").qrcode( { text: unescape( encodeURIComponent( `https://www.worker-schedule.com/join/${ groupData[number] }`) ) } ); 
     } );
   }
     
@@ -135,7 +134,6 @@ export class Share
     sdw.classList.add( 'add-member' );
     console.log( ( await calendar ).currentDate );
     for( let i = 0; i < new Date( ( await calendar ).currentDate.getFullYear(), ( await calendar ).currentDate.getMonth() + 1 , 0 ).getDate(); i++ ){
-      console.log( i );
         const shareDate = document.createElement( 'div' );
         shareDate.classList.add( 'share-date' );
         sdw.appendChild( shareDate ); 
