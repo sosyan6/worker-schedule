@@ -355,11 +355,28 @@ div#date-wrapper {
   justify-content: center;
 }
 
-#display-ad {
+#display-ad-plan {
   flex: 0 1;
+  display: flex;
+}
+
+#left-menu-display-ad {
+  display: flex;
+}
+
+#left-menu-display-ad > a {
+  display: flex;
+  flex: 1;
 }
 
 .display-ad {
+  height: 100%;
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.display-ad-for-banner {
   padding: 3px;
   box-sizing: border-box;
   width: 100%;
