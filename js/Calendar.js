@@ -54,6 +54,8 @@ export class Calendar
     calendar.scrollTo( calendar.scrollWidth * Math.floor( calendar.children.length / 2 ) / calendar.children.length, 0 );
     
     document.querySelector( 'input#date' ).addEventListener( 'change', ( e ) => {
+      calendar.dispatchEvent( new Event( 'onScroll' ) );
+      document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
       const value = e.target.value.split( '-' ).map( v => Number( v ) );
       this.setCurrentMonth( { year: value[0], month: value[1] - 1 } );
     } );
@@ -63,16 +65,10 @@ export class Calendar
         e.preventDefault();
         calendar.dispatchEvent( new Event( 'onScroll' ) );
         this.setCurrentMonth( { direction: -1 } );  // 月を1つ戻す
-        calendar.scrollTo( calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
-        document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
-        document.querySelector( 'div#share-list' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
       }else if( calendar.scrollLeft >= calendar.offsetWidth * 2 - 1 ){  // スクロール位置が右端なら
         e.preventDefault();
         calendar.dispatchEvent( new Event( 'onScroll' ) );
         this.setCurrentMonth( { direction: 1 } );  // 月を1つ進める
-        calendar.scrollTo( calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
-        document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
-        document.querySelector( 'div#share-list' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
       }else if( calendar.scrollLeft < calendar.offsetWidth * 0.5 ){  // スクロール位置が左と中央の境目なら
         // 見かけ上でのみ年月を変更
         document.querySelector( 'input#date' ).value = ( new Date( this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1 ) ).format( 'YYYY-MM' );
@@ -83,10 +79,16 @@ export class Calendar
       }
     } );
     
+    calendar.addEventListener( 'onScroll', () => {
+      calendar.scrollTo( calendar.offsetWidth, 0 );  // スクロール位置を中央からの位置に戻す
+      document.querySelector( 'div#this-month' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
+      document.querySelector( 'div#share-list' ).scrollTo( { top: 0, left: 0, behavior: 'smooth' } );
+    } );
+    
     const thisMonth = document.querySelector( 'div#this-month' );
     document.querySelector( 'div#prev-month-button' ).addEventListener( 'click', () => {
-      document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
       calendar.scrollBy( { top: 0, left: -thisMonth.offsetWidth, behavior: 'smooth'  } );
+      document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
     } );
     document.querySelector( 'div#next-month-button' ).addEventListener( 'click', () => {
       document.querySelectorAll( '.date' ).forEach( v => v.classList = ['date'] );
@@ -133,7 +135,6 @@ export class Calendar
             this.setPlan( getDateFromDateElement( date ) );
           }
         }else if( creatingDate.format( 'YYYY/MM/DD' ) === this.currentDate.format( 'YYYY/MM/DD' ) ){
-          console.log( this.currentDate );
           this.setSelectDate( date );
           this.setPlan( getDateFromDateElement( date ) );
         }
@@ -204,8 +205,8 @@ export class Calendar
     if( option.direction ){
       this.currentDate.setMonth( this.currentDate.getMonth() + option.direction );
     }else{
-      this.currentDate.setYear( option.year || this.baseDate.getFullYear() );
-      this.currentDate.setMonth( option.month || this.baseDate.getMonth() );
+      this.currentDate.setYear( option.year ?? this.baseDate.getFullYear() );
+      this.currentDate.setMonth( option.month ?? this.baseDate.getMonth() );
     }
     this.createCurrentCalendar();
     this.setIndexDate();

@@ -378,7 +378,6 @@ app.get( /\.md$/, ( req, res ) => {
       res.status( 404 ).send( 'error' );
       return;
     }
-    console.log( data );
     res.send( marked( data ) );
   } );
 } );
