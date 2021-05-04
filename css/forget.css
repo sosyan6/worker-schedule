@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+}
+
+#main {
+  width: 100vw;
+  height: calc( 100 * var( --vh ) );
+  background: #222;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#form {
+  width: 80%;
+  height: 90%;
+  background: #b8f2ff;
+}
+
+.mail-adderss:invalid {
+  background: #ffb8b8;
+}
+
+.mail-adderss:valid {
+  background: #ffb8ff;
+}
+

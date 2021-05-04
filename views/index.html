@@ -2,27 +2,38 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
+    <meta name="google-site-verification" content="0cAAvHMdgH87JN5b8GUXI-Zu_ZydNG1B2tBWHQ0LMrg" />
+    <meta name="keywords" content="シフト共有,シフト,カレンダー,予定表,ウェブアプリ,管理,teams,ワーカスケジュール,無料,ワークスケジュール" />
+    <meta name="description" content="ワーカースケジュールはシフトを共有できるカレンダーウェブアプリです。だれでも簡単にシフトを入力できて個人的な予定も入れることができます！">
+    <meta property="og:description" content="ワーカースケジュールはシフトを共有できるカレンダーウェブアプリです。だれでも簡単にシフトを入力できて個人的な予定も入れることができます！" />
+    <meta property="og:title" content="ワーカースケジュール" />
+    <meta property="og:image" content="https://cdn.glitch.com/858db837-c931-46a2-a794-b369c1dc5838%2Ficon2.png?v=1619924982787" />
+    <meta property="og:url" content="https://www.worker-schedule.com/" />
+    <meta property="og:locale" content="ja_JP" />
     <meta
       name="viewport"
       content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
     />
     <meta name = "theme-color" content = "#FFFFFF">
     <title>
-      シフト表
+      ワーカースケジュール
     </title>
   </head>
   <link rel = "shortcut icon" href = "a.png">
   <script src = "../js/GLib.js"></script>
-  <script src = "../js/createFavicon.js"></script>
+<!--   <script src = "../js/createFavicon.js"></script> -->
   <script src = "../js/setVH.js"></script>
   <script src = "../js/keyboardHelper.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../js/jquery.longpress.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+  <link rel="icon" href="https://cdn.glitch.com/858db837-c931-46a2-a794-b369c1dc5838%2Fedaca749af994c1c65872914e4ac2922_xxo.ico?v=1619855357845">
   <link rel="stylesheet" href="../css/index.css" />
   <link rel="stylesheet" href="../css/shiftType.css" />
   <link rel="stylesheet" href="../css/drawerMenu.css" />
   <link rel="stylesheet" href="../css/inputForm.css" />
   <link rel="stylesheet" href="../css/share.css" />
+<!--   <script src="//rot8.a8.net/jsa/8b48743f429671f6633c395b9d8f86a4/c6f057b86584942e415435ffb1fa93d4.js"></script> -->
   <script src = "../js/cssVariable.js"></script>
   <script src = "../js/themeSetting.js"></script>
   <script src="../js/index.js"></script>
@@ -34,18 +45,52 @@
         <div id="menu">
           <div id = "menu-header">
             <div id = "display-name">名無しさん</div>
+            <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
+              <g>
+                <path class="st0" d="M489.4,328.121l-35.714-23.633c-6.18-4.09-9.383-11.39-8.23-18.71c1.527-9.703,2.34-19.645,2.34-29.778
+                  c0-10.133-0.813-20.074-2.34-29.778c-1.153-7.316,2.054-14.621,8.23-18.706l35.714-23.637c8.363-5.531,10.973-16.614,5.962-25.297
+                  l-35.317-61.165c-5.012-8.683-15.914-11.965-24.886-7.488l-38.325,19.114c-6.629,3.308-14.562,2.43-20.324-2.23
+                  c-15.41-12.465-32.789-22.59-51.598-29.836c-6.902-2.66-11.614-9.094-12.062-16.473l-2.606-42.695
+                  C309.63,7.801,301.338,0,291.315,0h-70.629c-10.023,0-18.317,7.801-18.93,17.809l-2.606,42.695
+                  c-0.45,7.379-5.16,13.813-12.062,16.473c-18.809,7.246-36.188,17.371-51.598,29.836c-5.762,4.66-13.695,5.538-20.325,2.23
+                  L76.842,89.93c-8.973-4.477-19.875-1.195-24.886,7.488l-35.317,61.165c-5.011,8.683-2.402,19.766,5.961,25.297l35.715,23.637
+                  c6.18,4.086,9.382,11.39,8.23,18.706c-1.527,9.703-2.34,19.645-2.34,29.778c0,10.133,0.813,20.074,2.34,29.778
+                  c1.152,7.32-2.05,14.621-8.23,18.71l-35.715,23.633c-8.363,5.535-10.972,16.614-5.961,25.297l35.317,61.168
+                  c5.011,8.68,15.914,11.962,24.886,7.489l38.324-19.114c6.63-3.309,14.563-2.43,20.325,2.23
+                  c15.41,12.465,32.789,22.594,51.598,29.836c6.902,2.66,11.613,9.094,12.062,16.473l2.606,42.691
+                  c0.613,10.004,8.906,17.809,18.93,17.809h70.629c10.023,0,18.316-7.805,18.93-17.809l2.606-42.691
+                  c0.449-7.379,5.16-13.813,12.062-16.473c18.809-7.242,36.187-17.371,51.598-29.836c5.762-4.66,13.695-5.539,20.324-2.23
+                  l38.325,19.114c8.972,4.473,19.874,1.191,24.886-7.489l35.317-61.168C500.373,344.734,497.763,333.656,489.4,328.121z M320.424,256
+                  c0,35.582-28.844,64.426-64.422,64.426c-35.582,0-64.426-28.843-64.426-64.426c0-35.578,28.844-64.426,64.426-64.426
+                  C291.58,191.574,320.424,220.422,320.424,256z"></path>
+              </g>
+            </svg>
           </div>
-          <li id = "menu-list">
-            <ul id = "theme-settings-button">テーマ設定</ul>
-            <ul id = "signout">
-              <div>
-                ログアウト
-              </div>
-              <div>
-                本当にログアウトしますか？
-              </div>
-            </ul>
-          </li>
+          <ul id = "menu-list">
+            <li id = "theme-settings-button">テーマ設定</li>
+            <li id = "release-note">リリースノート</li>
+            <li id = "how-to-use">使い方(coming soon)</li>
+            <li id = "about">このサイトについて</li>
+            <div id="left-menu-display-ad">
+<!--               <a target="_blank" href="https://px.a8.net/svt/ejp?a8mat=3HA8AU+7O95GY+50+2HFQHT" rel="nofollow">
+              <img class="display-ad" border="0" alt="" src="https://www27.a8.net/svt/bgt?aid=210429318464&wid=001&eno=01&mid=s00000000018015022000&mc=1"></a>
+              <img border="0" width="1" height="1" src="https://www16.a8.net/0.gif?a8mat=3HA8AU+7O95GY+50+2HFQHT" alt="">
+              <a target="_blank" href="https://px.a8.net/svt/ejp?a8mat=3HA8AW+1C84S2+3O26+TV3PD" rel="nofollow">
+              <img class="display-ad" border="0" alt="" src="https://www21.a8.net/svt/bgt?aid=210429320081&wid=001&eno=01&mid=s00000017115005016000&mc=1"></a>
+              <img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=3HA8AW+1C84S2+3O26+TV3PD" alt=""> -->
+              <!-- Rakuten Widget FROM HERE -->
+              <script type="text/javascript">rakuten_affiliateId="0ea62065.34400275.0ea62066.204f04c0";rakuten_items="ranking";rakuten_genreId="0";rakuten_recommend="on";rakuten_design="slide";rakuten_size="200x350";rakuten_target="_blank";rakuten_border="on";rakuten_auto_mode="on";rakuten_adNetworkId="a8Net";rakuten_adNetworkUrl="https%3A%2F%2Frpx.a8.net%2Fsvt%2Fejp%3Fa8mat%3D3HA8AU%2B7NNPV6%2B2HOM%2BBS629%26rakuten%3Dy%26a8ejpredirect%3D";rakuten_pointbackId="a21042987362_3HA8AU_7NNPV6_2HOM_BS629";rakuten_mediaId="20011816";</script><script type="text/javascript" src="//xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js"></script><!-- Rakuten Widget TO HERE -->
+              <img border="0" width="1" height="1" src="https://www17.a8.net/0.gif?a8mat=3HA8AU+7NNPV6+2HOM+BS629" alt="">
+            </div>
+          </ul>
+          <div id = "signout">
+            <div>
+              ログアウト
+            </div>
+            <div>
+              本当にログアウトしますか？
+            </div>
+          </div>
         </div>
         <svg x="0px" y="0px" viewbox="0 0 512 512" xml:space="preserve">
           <g>
@@ -54,8 +99,6 @@
             <rect y="400" class="st0" width="512" height="96" rx = "48" ry = "48"></rect>
           </g>
         </svg>
-          <!-- group-form-buttonと関連付けられたform -->
-          
       </div>
       <div id="body-wrapper"></div>
       <div id = "prev-month-button">
@@ -99,6 +142,13 @@
     <!--  calender start -->
     <div id="content-wrapper" class="month">
       <div id = "drawer-conteiner">
+        
+<!--    -------------------------------------      -->
+        <div id = "frame" class = "drawer-menu">
+          <div class = "drawer-form">
+            <iframe></iframe>
+          </div>
+        </div>
         
 <!---------------------------------------------------------->
         <div id = "shift-type" class = "drawer-menu">
@@ -224,9 +274,9 @@
                   クリップボードに共有リンクをコピーしました
                 </div>
               </div>
+              <div id = "qrcode"></div>
               <div>
-                <input type="text" name="URL" onfocus="this.select();">
-                <lavel>URL</lavel>
+                <input type="text" name="URL" onfocus="this.select();" readonly>
               </div>
             </div>
           </div>
@@ -294,9 +344,16 @@
       <div id="plan">
         <div id = "today-plan">
           <div id = "today-view">
+            <div id = "today-date"></div>
+            <div id = "holiday-name"></div>
           </div>
         </div>
         <div id="plan-list">
+        </div>
+        <div id="display-ad-plan">
+          <a target="_blank" href="https://rpx.a8.net/svt/ejp?a8mat=3HA8AU+7NNPV6+2HOM+69WPT&rakuten=y&a8ejpredirect=http%3A%2F%2Fhb.afl.rakuten.co.jp%2Fhgc%2F0ea62065.34400275.0ea62066.204f04c0%2Fa21042987362_3HA8AU_7NNPV6_2HOM_69WPT%3Fpc%3Dhttp%253A%252F%252Fwww.rakuten.co.jp%252F%26m%3Dhttp%253A%252F%252Fm.rakuten.co.jp%252F" rel="nofollow">
+          <img class="display-ad-for-banner" src="https://hbb.afl.rakuten.co.jp/hsb/0eb4bbcc.75d64715.0eb4bbaa.95151395/" border="0" alt="広告"></a>
+          <img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=3HA8AU+7NNPV6+2HOM+69WPT" alt="">
         </div>
         <div id = "add-plan" class = "add-button">
           <div id = "add-plan-message"></div>

@@ -61,6 +61,15 @@ div#login:after {
   left: 10%;
 }
 
+#forget {
+  position: absolute;
+  font-size: .8em;
+  bottom: 10%;
+  width: 100%;
+  text-align: center;
+  z-index: -1;
+}
+
 .button {
   width: 80%;
 }

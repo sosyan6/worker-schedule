@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>お忘れの方 | ワーカースケジュール</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <link rel="stylesheet" href="../css/forget.css" />
+    <link rel="icon" href="https://cdn.glitch.com/858db837-c931-46a2-a794-b369c1dc5838%2Fedaca749af994c1c65872914e4ac2922_xxo.ico?v=1619855357845">
+    <script src = "../js/setVH.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <div id="form">
+        <form action="/forget" accept-charset="utf8" method="post">
+          <label for="email">登録したメールアドレスを入力してください</label>
+          <input class="mail-adderss" name="email" type="email" pattern="^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$" required>
+          <input type="submit" value="送信">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

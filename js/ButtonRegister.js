@@ -21,28 +21,51 @@ export class ButtonRegister
   
   registButton()
   {
+    document.querySelector( 'div#menu-header' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/forget.html' );
+    } );
+    document.querySelector( 'li#release-note' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/release.html' );
+    } );
+    document.querySelector( 'li#how-to-use' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './views/howtouse.html' );
+    } );
+    
+    document.querySelector( 'li#about' ).addEventListener( 'click', () => {
+      const frame = document.querySelector( '#frame' );
+      frame.dispatchEvent( new Event( 'open' ) );
+      frame.querySelector( 'iframe' ).contentWindow.location.replace( './about.md' );
+      
+      // document.querySelector( '#menu' ).dispatchEvent( new Event( 'close' ) );
+    } );
+    
     const addShift = document.querySelector( '#add-shift-form' );
     const configElement = document.querySelectorAll( '#add-shift-form > div > *' );
 //-------------------------------------------------------------------------------------------
-    this.addShiftButton.addEventListener( 'click', ( e ) => {
+    this.addShiftButton.addEventListener( 'click', async( e ) => {
       if( !e.target.isEqualNode( this.addShiftButton ) ) return;
       document.querySelectorAll( '#add-shift-form > div > *' ).forEach( ( e ) => {
         if( e.name ){
           if( e.name === 'shiftName' ){
             e.removeAttribute( 'readonly' );
             e.value = '';
-            e.style.background = '#ffffff';
+            e.style.background = 'var( --bg-color )';
           }
           else if( e.name === 'color' ) e.value = '#ff0000';
           else if( e.name === 'initial' ) e.value = '';
           else if( e.name === 'sharp' ) e.value = 'rect';
-          console.log( e );
         }
       } );
 
-      document.querySelectorAll( '.icon-preview' ).forEach( async icon => {
-        icon.querySelectorAll( '*' ).forEach( e => e.remove() );
-      } );
+      const icon = addShift.querySelector( '.icon-preview' );
+      icon.querySelectorAll( '*' ).forEach( e => e.remove() );
+      icon.appendChild( ( await setData ).createIconElement( {color: "#ff0000", sharp: "rect", initial: ""} ) );
       
       addShift.querySelector( '.submit-button' ).style.display = '';
       addShift.querySelector( '.edit-button' ).style.display = '';
@@ -57,7 +80,7 @@ export class ButtonRegister
           if( e.name === 'shiftName' ){
             e.removeAttribute( 'readonly' );
             e.value = '';
-            e.style.background = '#ffffff';
+            e.style.background = 'var( --bg-color )';
           }
           else if( e.name === 'scheduleMemo' ) e.value = '';
           else if( e.name === 'startTime' || e.name === 'endTime' ) e.value = '';
@@ -73,6 +96,7 @@ export class ButtonRegister
       const groupElement = document.querySelectorAll( '#create-group-form > .input-form > div > *' );
       const displayURL = document.querySelector( '#display-URL' );
       const strData = (await streamData);
+      const groupData = (await strData.ownData).data.group;
       const groupInfo = elementsToDict( groupElement );
       if( !inputCheck( groupInfo ) ){
         [...groupElement].forEach( v => {
@@ -82,21 +106,24 @@ export class ButtonRegister
           } 
         
         } );
-        const number = (await streamData).getCookies().groupNum;
-        document.cookie = `groupNum=${number+1}; max-age=${60*60*24*365}`;
         return;
       }
-      const cookie = strData.getCookies();
+      const cookie = getCookies();
       groupInfo.SID = cookie.SID;
       
       document.querySelector( '#create-group-drawer' ).dispatchEvent( new Event( 'close' ) );
 
       strData.createGroup( groupInfo ).then( async GID => {
+        const number = getCookies().groupNum;
+        document.cookie = `groupNum=${groupData.length-1}; max-age=${60*60*24*365}`;
+        $("#qrcode").html( '' );
+        $("#qrcode").qrcode( { text: unescape( encodeURIComponent( `https://www.worker-schedule.com/join/${ groupData[number] }`) ) } ); 
         this.addGroup.parentElement.dispatchEvent( new Event( 'close' ) );
-        displayURL.querySelector( 'input' ).value = `https://worker-schedule.glitch.me/join/${GID}`;
-        navigator.clipboard.writeText(`https://worker-schedule.glitch.me/join/${GID}`);
+        displayURL.querySelector( 'input' ).value = `https://www.worker-schedule.com/join/${GID}`;
+        navigator.clipboard.writeText(`https://www.worker-schedule.com/join/${GID}`);
         displayURL.parentElement.dispatchEvent( new Event( 'open' ) );
         (await share).setGroupSelect();
+        (await share).setShareCalendar( GID );
       } );
 
     } );
@@ -215,7 +242,7 @@ export class ButtonRegister
     planForm.querySelector( '.edit-button > .edit' ).addEventListener( 'click', async() =>
     {
       const date = getDateFromDateElement( document.querySelector( '.select-date' ) );
-      const dayShift = ( await setData ).getDayShift( date );
+      const dayShift = await ( await setData ).getDayShift( date );
       const currentEdit = document.querySelector( '.current-edit' );
       const data = dayShift.schedule[parseInt( currentEdit.getAttribute( 'count' ) )];
       
@@ -232,7 +259,7 @@ export class ButtonRegister
     {
       const date = getDateFromDateElement( document.querySelector( '.select-date' ) );
       const currentEdit = document.querySelector( '.current-edit' );
-      const dayShift = ( await setData ).getDayShift( date );
+      const dayShift = await ( await setData ).getDayShift( date );
       
       dayShift.schedule = dayShift.schedule.filter( ( v, count ) => count !== parseInt( currentEdit.getAttribute( 'count' ) ) );
       
@@ -249,7 +276,7 @@ export class ButtonRegister
     const parentButton = document.querySelector( '#add-shift-form' );
     
     const closeEvent = async() => {
-      ( await calendar ).initDisplayDate();
+      ( await calendar ).createCurrentCalendar();
       ( await setData ).setShiftTypeSelect();
       document.querySelector( '#add-shift-drawer' ).dispatchEvent( new Event( 'close' ) );
     }

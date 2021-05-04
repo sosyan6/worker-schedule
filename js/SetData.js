@@ -7,7 +7,7 @@ export class SetData {
       this.setShiftTypeSelect();
       // document.querySelector( '.select-date' ).dispatchEvent( new Event( 'click' ) );  //  今日のplanを表示する
       
-      ( await calendar ).setSelectDate( new Date(), document.querySelector( '.today' ) );
+      ( await calendar ).setSelectDate( document.querySelector( '.today' ) );
       document.querySelector( '.icon-preview' ).appendChild( this.createIconElement( elementsToDict( document.querySelectorAll( '#shift-type-config > .input-form > div > *' ) ) ) );
     } );
   }
@@ -27,10 +27,13 @@ export class SetData {
     
     const get = date =>
     {
-      if( date && this.shift?.hasOwnProperty( date.format( 'YYYY/MM' ) ) && this.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
-        return this.shift[date.format( 'YYYY/MM' )][date.format('DD')];
-      else
-        return null;
+      return new Promise( async resolve => {
+        const data = await this.waitSetData();
+        if( date && data.shift?.hasOwnProperty( date.format( 'YYYY/MM' ) ) && data.shift[date.format( 'YYYY/MM' )].hasOwnProperty( date.format( 'DD' ) ) )
+          resolve( data.shift[date.format( 'YYYY/MM' )][date.format('DD')] );
+        else
+          resolve();
+      } );
     };
     
     switch( args.length )
@@ -112,13 +115,6 @@ export class SetData {
         break;
     }
   }
-
-  loopMonth( monthElement, func )
-  {
-    monthElement.querySelectorAll( '.week' ).forEach( ( week, w ) => {
-      week.querySelectorAll( '.date' ).forEach( ( date, d ) => func( { 'week': week, 'w': w, 'date': date, 'd': d } ) );
-    });
-  }
   
   deleteShiftTypeDate()
   {
@@ -154,7 +150,7 @@ export class SetData {
     const c = await calendar;
     if( next && !next.classList.contains( 'not-this-month' ) )
       // next.dispatchEvent( new Event( 'click' ) );
-      c.setSelectDate( getDateFromDateElement( next ), next );
+      c.setSelectDate( next );
     else
     {
       const nextWeek = [...document.querySelectorAll( '#this-month > .week' )].next( document.querySelector( '.select-date' ).parentNode );
@@ -163,7 +159,7 @@ export class SetData {
         const next = [...nextWeek.querySelectorAll( '.date' )][0];
         if( !next.classList.contains( 'not-this-month' ) )
           // next.dispatchEvent( new Event( 'click' ) );
-          c.setSelectDate( getDateFromDateElement( next ), next );
+          c.setSelectDate( next );
       }
     }
   }
@@ -209,7 +205,7 @@ export class SetData {
       const icon = this.createIconElement( this.shiftType[shiftKeys[i]], shiftKeys[i] );
       // icon.setAttribute( 'count', i );
       
-      $( icon ).longpress( () => {
+      $( icon ).longpress( async() => {
         
         const drawer = document.querySelector( '#add-shift-drawer' );
         const addShift = document.querySelector( '#add-shift-form' );
@@ -228,12 +224,13 @@ export class SetData {
             else e.value = data[e.name];
           }
         } );
+        
+        const iconPreview = drawer.querySelector( '.edit-button > .icon-preview' );
+        iconPreview.querySelectorAll( '*' ).forEach( e => e.remove() );
+        iconPreview.appendChild( ( await setData ).createIconElement( {color: "#ff0000", sharp: "rect", initial: ""} ) );
+        
         addShift.querySelector( '.submit-button' ).style.display = 'none';
         addShift.querySelector( '.edit-button' ).style.display = 'flex';
-        
-        document.querySelectorAll( '.icon-preview' ).forEach( async icon => {
-          icon.querySelectorAll( '*' ).forEach( e => e.remove() );
-        } );
         
         drawer.dispatchEvent( new Event( 'open' ) );
       }, () => {}, 300 );
@@ -244,11 +241,11 @@ export class SetData {
   
   createShiftTypeDate( date, dateElement )
   {
-    this.waitSetData().then( d =>
-    {  
+    this.waitSetData().then( async d =>
+    {
       const schedule = d.shift;
       const shiftType = d.shiftType;
-      const shiftName = this.getDayShift( date );
+      const shiftName = await this.getDayShift( date );
       
       dateElement.querySelector( '.date-shift-type' )?.remove();
       
