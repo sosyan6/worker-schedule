@@ -13,10 +13,11 @@ export class Share
     const sdw = document.createElement( 'div' );
     sdw.classList.add( 'share-date-wrapper' );
     sdw.classList.add( 'add-member' );
-    document.querySelectorAll( '#this-month .date:not( .not-this-month )' ).forEach( () => {
+    [...document.querySelectorAll( '#this-month .date:not( .not-this-month )' )].map( () => {
         const shareDate = document.createElement( 'div' );
         shareDate.classList.add( 'share-date' );
         sdw.appendChild( shareDate );
+        // console.log( 1 );
     } );
     this.shareList.appendChild( sdw );
     

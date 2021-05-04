@@ -1,5 +1,5 @@
 <div style = "text-align: center"><h1>worker-schedule</h1></div>
-<div style = "text-align: right">version β0.1.2</div>
+<div style = "text-align: right">version β0.1.4</div>
 
 #### 開発者
 <details><summary>grady1218</summary>

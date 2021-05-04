@@ -29,7 +29,7 @@ div.shift-type > svg {
 
 .shift-type-initial {
   color: black;
-  font-size: 20px;
+/*   font-size: 20px; */
   height: auto;
   position: absolute;
   text-align: center;

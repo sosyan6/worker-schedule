@@ -148,7 +148,7 @@ ul#menu-list {
   flex-direction: column;
   height: calc( 100% - 6em );
   padding-inline-start: 0;
-  margin-block: 0;
+  margin: 0;
   overflow:  scroll;
 }
 
@@ -342,6 +342,10 @@ div#menu-header > svg {
   box-sizing: border-box;
   opacity: 1;
   transform: translateY( 50% );
+  transition: transform .2s ease;
+}
+div#menu-header:hover > svg {
+  transform: translateY( 50% ) rotate( 180deg );
 }
 
 #frame > .drawer-form {
@@ -387,6 +391,20 @@ div#date-wrapper {
 /*   flex: 1; */
   position: relative;
   margin: 2px;
+}
+#today-plan > #today-view {
+  width: 100%;
+  display: flex;
+}
+
+#today-plan > #today-view > #holiday-name {
+  margin: 0 .5em;
+  padding: 0 .5em;
+  color: #FFF;
+  background: #F55;
+}
+#today-plan > #today-view > #holiday-name:empty {
+  display: none;
 }
 
 .add-button {
@@ -970,6 +988,9 @@ div#content-wrapper.share > div#calendar-wrapper > div#calendar {
 .week > .date:last-of-type, #day > div:last-of-type {
   color: #55f !important;
 }
+.week > .date.holiday {
+  color: #f55 !important;
+}
 
 div#content-wrapper > div#calendar-wrapper > div#calendar > div > div.week > div.date.today {
   background: #ff05;
@@ -1214,7 +1235,7 @@ div#share {
   }
 }
 
-@media screen and ( min-aspect-ratio: 1 / 1 ) {
+@media screen and ( min-aspect-ratio: 5 / 4 ) {
   
   div#content-wrapper.month {
     flex-direction: row;

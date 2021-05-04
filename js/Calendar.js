@@ -5,6 +5,7 @@ export class Calendar
     this.baseDate = new Date();
     this.selectDate = new Date( this.baseDate );
     this.currentDate = new Date( this.baseDate );
+    this.holiday = {};
     
     this.initCalendar();
   }
@@ -121,6 +122,9 @@ export class Calendar
   
   createMonth( element, monthDate )
   {
+    if( !this.holiday[monthDate.getFullYear()] )
+      this.holiday[monthDate.getFullYear()] = new Promise( resolve => $.get( `https://holidays-jp.github.io/api/v1/${ monthDate.getFullYear() }/date.json` ).done( res => resolve( res ) ) );
+    
     const creatingDate = new Date( monthDate );
     creatingDate.setDate( -creatingDate.getDay() + 1 );
     
@@ -147,6 +151,12 @@ export class Calendar
         s.createShiftTypeDate( savedDate, date );
       } );
       
+      this.holiday[monthDate.getFullYear()].then( v => {
+        if( !v[savedDate.format( 'YYYY-MM-DD' )] ) return;
+        
+        date.classList.add( 'holiday' );
+      } );
+      
       creatingDate.setDate( creatingDate.getDate() + 1 );
     } );
   }
@@ -161,7 +171,10 @@ export class Calendar
     
     this.selectDate = getDateFromDateElement( date );
     date.classList.add( 'select-date' );
-    document.querySelector( 'div#today-view' ).innerText = this.selectDate.format( 'MM/DD(dd)' );
+    document.querySelector( 'div#today-view > #today-date' ).innerText = this.selectDate.format( 'MM/DD(dd)' );
+    this.holiday[this.selectDate.getFullYear()].then( v => {
+      document.querySelector( 'div#today-view > #holiday-name' ).innerText = v[this.selectDate.format( 'YYYY-MM-DD' )] ? v[this.selectDate.format( 'YYYY-MM-DD' )] : '';
+    } );
   }
   
   async setPlan( date )
