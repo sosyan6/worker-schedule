@@ -17,6 +17,7 @@ export class ButtonRegister
     this.registButton();
     this.editPlanButtonRegist();
     this.editShiftButtonRegist();
+    // this.notify();
   }
   
   registButton()
@@ -65,7 +66,7 @@ export class ButtonRegister
 
       const icon = addShift.querySelector( '.icon-preview' );
       icon.querySelectorAll( '*' ).forEach( e => e.remove() );
-      icon.appendChild( ( await setData ).createIconElement( {color: "#ff0000", sharp: "rect", initial: ""} ) );
+      icon.appendChild( ( await setData ).createIconElement( { color: '#ff0000', sharp: 'rect', initial: '' } ) );
       
       addShift.querySelector( '.submit-button' ).style.display = '';
       addShift.querySelector( '.edit-button' ).style.display = '';
@@ -306,6 +307,15 @@ export class ButtonRegister
     
     //  ボタンが押されずformが閉じられた場合にクラスを取り除く
     document.querySelector( '#add-shift-drawer' ).addEventListener( 'onclose', () => document.querySelector( '.current-edit' )?.classList.remove( 'current-edit' ) );
-    
+  }
+  
+  notify()
+  {
+    if( !( 'Notification' in window ) ){
+      console.log( 'Notificationは対応してません' );
+    }else if( Notification.permission === 'granted' ){
+    }else if( Notification.permission !== 'denied' ){
+      Notification.requestPermission();
+    }
   }
 }
